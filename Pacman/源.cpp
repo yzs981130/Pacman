@@ -2,6 +2,10 @@
 * Pacman 样例程序
 * 作者：zhouhy
 * 时间：2016/3/22 15:32:51
+* 最后更新：2016/4/22 16:18
+* 【更新内容】
+* 修复了文件不存在时不能通过控制台输入的Bug……
+* 修改的部位：包含了fstream库、ReadInput的函数体中前几行发生了变化，不使用freopen了。
 *
 * 【命名惯例】
 *  r/R/y/Y：Row，行，纵坐标
@@ -30,6 +34,7 @@
 * 如果你觉得自带代码太过冗长，可以考虑将整个namespace折叠
 */
 
+#include <fstream>
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
@@ -532,14 +537,23 @@ namespace Pacman
         int ReadInput(const char *localFileName, string &obtainedData, string &obtainedGlobalData)
         {
             string str, chunk;
-            std::ios::sync_with_stdio(false); //ω\\)
 #ifdef _BOTZONE_ONLINE
+            std::ios::sync_with_stdio(false); //ω\\)
             getline(cin, str);
 #else
             if (localFileName)
-                freopen(localFileName, "r", stdin); // 文件不存在的话 stdin 不会受影响
-            while (getline(cin, chunk) && chunk != "")
-                str += chunk;
+            {
+                std::ifstream fin(localFileName);
+                if (fin)
+                    while (getline(fin, chunk) && chunk != "")
+                        str += chunk;
+                else
+                    while (getline(cin, chunk) && chunk != "")
+                        str += chunk;
+            }
+            else
+                while (getline(cin, chunk) && chunk != "")
+                    str += chunk;
 #endif
             Json::Reader reader;
             Json::Value input;
