@@ -309,14 +309,14 @@ namespace Pacman
             return true;
         }
 
-        // 判断指定玩家向指定方向移动是不是合法的（没有撞墙且没有踩到豆子产生器）
+        // 判断指定玩家向指定方向移动是不是合法的（没有撞墙）
         inline bool ActionValid(int playerID, Direction &dir) const
         {
             if (dir == stay)
                 return true;
             const Player &p = players[playerID];
             const GridStaticType &s = fieldStatic[p.row][p.col];
-            return dir >= -1 && dir < 4 && !(s & direction2OpposingWall[dir]) && !(s & generator);
+            return dir >= -1 && dir < 4 && !(s & direction2OpposingWall[dir]);
         }
 
         // 在向actions写入玩家动作后，演算下一回合局面，并记录之前所有的场地状态，可供日后恢复。
