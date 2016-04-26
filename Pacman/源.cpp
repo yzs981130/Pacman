@@ -816,7 +816,6 @@ namespace Helpers
 
 int main()
 {
-    string dict[] = {"WhyAreYouSoGoodAtIt", "WhyWouldItBLikeThis"};
     Pacman::GameField gameField;
     string data, globalData; // 这是回合之间可以传递的信息
 
@@ -841,7 +840,6 @@ int main()
     if (rand() % 6)
         gameField.WriteOutput((Pacman::Direction)(maxD - 1), "", data, globalData);
     else
-        gameField.WriteOutput((Pacman::Direction)(maxD - 1), dict[Helpers::RandBetween(0, 2)], data, globalData);
-    system("pause");
+        gameField.WriteOutput((Pacman::Direction)(maxD - 1), "Hello, cruel world", data, globalData);
     return 0;
 }
