@@ -880,7 +880,7 @@ namespace Helpers
                 a.pop();
             }
         }
-        return -1;
+        return 99999;
     }
     
     int FindSmallestIndex(int *a, int n)
