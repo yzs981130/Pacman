@@ -1,12 +1,4 @@
 /*
-* Pacman 样例程序
-* 作者：zhouhy
-* 时间：2016/3/22 15:32:51
-* 最后更新：2016/4/22 16:18
-* 【更新内容】
-* 修复了文件不存在时不能通过控制台输入的Bug……
-* 修改的部位：包含了fstream库、ReadInput的函数体中前几行发生了变化，不使用freopen了。
-*
 * 【命名惯例】
 *  r/R/y/Y：Row，行，纵坐标
 *  c/C/x/X：Column，列，横坐标
@@ -38,6 +30,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
+#include <cmath>
 #include <iostream>
 #include <algorithm>
 #include <string>
@@ -46,6 +39,7 @@
 #include <stdexcept>
 #include "jsoncpp/json.h"
 
+#define DEPTH 5
 #define FIELD_MAX_HEIGHT 20
 #define FIELD_MAX_WIDTH 20
 #define MAX_GENERATOR_COUNT 4 // 每个象限1
@@ -748,6 +742,10 @@ namespace Helpers
 {
 
     int actionScore[5] = {};
+    int TempMaxValue = -99999, TempValue = 0;
+    Pacman::Direction TempAction[5];
+    Pacman::Direction MyDFSAct;
+    Pacman::FieldProp BeginPosition;
 
     inline int RandBetween(int a, int b)
     {
@@ -812,11 +810,75 @@ namespace Helpers
         while (count-- > 0)
             gameField.PopState();
     }
+    
+    //todo
+    int ShortestPath(Pacman::GameField &gamefield, Pacman::FieldProp Begin, Pacman::FieldProp End)
+    {
+        int cnt = 0;
+        return cnt;
+    }
+    
+    int FindSmallestIndex(int *a, int n)
+    {
+        int p = a[0], ans = 0;
+        for(int i = 1; i < n; i++)
+            if (a[i] < p)
+            {
+                p = a[i];
+                ans = i;
+            }
+        return ans;
+    }
+
+    int FindNearGeneratorIndex(Pacman::GameField &gameField, int myID)
+    {
+        int tmpDistance[MAX_GENERATOR_COUNT] = {0};
+        for (int i = 0; i < MAX_GENERATOR_COUNT; i++)
+            tmpDistance[i] = ShortestPath(gameField, gameField.players[myID], gameField.generators[i]);
+        return FindSmallestIndex(tmpDistance, MAX_GENERATOR_COUNT);
+    }
+    
+    void FruitFirstPlay(Pacman::GameField &gameField, int myID, int step)
+    {
+        int myAct = -1;
+        if (step == DEPTH - 1 || !gameField.NextTurn())
+        {
+            if (TempValue > TempMaxValue)
+            {
+                TempMaxValue = TempValue;
+                MyDFSAct = TempAction[0];
+            }
+            return;
+        }
+        for (Pacman::Direction d = Pacman::up; d < 4; ++d)
+        {
+            if (gameField.ActionValid(myID, d))
+            {
+                TempAction[step] = d;
+                BeginPosition = gameField.players[myID];
+                Pacman::GridContentType &content = gameField.fieldContent[BeginPosition.col][BeginPosition.row];
+                if (content & Pacman::largeFruit)
+                {
+                    TempValue += 5;
+                    content &= ~Pacman::largeFruit;
+                }
+                if (content & Pacman::smallFruit)
+                {
+                    TempValue += 2;
+                    content &= ~Pacman::smallFruit;
+                }
+                //todo加入敌人预警
+                FruitFirstPlay(gameField, myID, step + 1);
+                gameField.PopState();
+            }
+        }
+    }
 }
 
 int main()
 {
     string dict[] = {"WhyAreYouSoGoodAtIt", "WhyWouldItBLikeThis", "你怎么这么熟练", "你到底做过多少次了"};
+    string WhiteMembraneTauntLibrary[] = {"WB"};
     Pacman::GameField gameField;
     string data, globalData; // 这是回合之间可以传递的信息
 
@@ -834,6 +896,9 @@ int main()
         if (Helpers::actionScore[d] > Helpers::actionScore[maxD])
             maxD = d;
 
+    //DFS
+    Helpers::FruitFirstPlay(gameField, myID, 0);
+
     // 输出当前游戏局面状态以供本地调试。注意提交到平台上会自动优化掉，不必担心。
     gameField.DebugPrint();
 
@@ -841,6 +906,9 @@ int main()
     if (rand() % 2)
         gameField.WriteOutput((Pacman::Direction)(maxD - 1), "", data, globalData);
     else
-        gameField.WriteOutput((Pacman::Direction)(maxD - 1), dict[Helpers::RandBetween(0, 4)], data, globalData);
+        gameField.WriteOutput((Helpers::MyDFSAct), dict[Helpers::RandBetween(0, 4)], data, globalData);
+#ifndef _BOTZONE_ONLINE
+    system("pause");
+#endif
     return 0;
 }
