@@ -1,5 +1,6 @@
 /*
- * 作者：zhouhy
+/* 样例程序
+ * 作者：zhouhy bibifish
  * 时间：2016/3/22 15:32:51
  * 最后更新：2016/4/24 17:18
  * 【更新内容2】
@@ -65,7 +66,7 @@ using std::runtime_error;
 // 平台提供的吃豆人相关逻辑处理程序
 namespace Pacman
 {
-	const time_t seed = time(0);
+	const time_t seed = time(0);//time()函数返回1970年1月1日0点到此时秒数，并将值写入传入指针，写入0表示无传入指针 － bibifish
 	const int dx[] = { 0, 1, 0, -1, 1, 1, -1, -1 }, dy[] = { -1, 0, 1, 0, -1, 1, 1, -1 };
 
 	// 枚举定义；使用枚举虽然会浪费空间（sizeof(GridContentType) == 4），但是计算机处理32位的数字效率更高
@@ -738,7 +739,13 @@ namespace Pacman
 			turnID = 0;
 		}
 
-		GameField(const GameField &b) : GameField() { }
+		GameField(const GameField &b){
+            if (constructed)
+                throw runtime_error("请不要再创建 GameField 对象了，整个程序中只应该有一个对象");
+            constructed = true;
+
+            turnID = 0;
+        }
 	};
 
 	bool GameField::constructed = false;
@@ -838,9 +845,15 @@ int main()
 	gameField.DebugPrint();
 
 	// 随机决定是否叫嚣
-	if (rand() % 6)
-		gameField.WriteOutput((Pacman::Direction)(maxD - 1), "", data, globalData);
-	else
-		gameField.WriteOutput((Pacman::Direction)(maxD - 1), "Hello, cruel world", data, globalData);
+    std::string quotes[7] = {
+    "I run faster than western journalists.",
+    "Why are you so good at it?",
+    "How many times?",
+    "Wealth goes without words",
+    "Stay young, stay naive.",
+    "I got some life experience.",
+    "All pacmen are created equal!"
+    };
+	gameField.WriteOutput((Pacman::Direction)(maxD - 1), quotes[rand()%7], data, globalData);
 	return 0;
 }
