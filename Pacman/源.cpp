@@ -43,6 +43,7 @@
 #include <string>
 #include <cstring>
 #include <stack>
+#include <queue>
 #include <stdexcept>
 #include "jsoncpp/json.h"
 
@@ -60,7 +61,8 @@ using std::cout;
 using std::endl;
 using std::getline;
 using std::runtime_error;
-
+using std::queue;
+using std::stack;
 // 平台提供的吃豆人相关逻辑处理程序
 namespace Pacman
 {
@@ -151,6 +153,7 @@ namespace Pacman
     struct FieldProp
     {
         int row, col;
+		FieldProp(int r=0,int c=0):row(r),col(c){}
     };
 
     // 场地上的玩家
@@ -812,8 +815,73 @@ namespace Helpers
         while (count-- > 0)
             gameField.PopState();
     }
-}
 
+}
+namespace QhHelper {
+	using Pacman::Direction;
+	using Pacman::GridStaticType;
+	using Pacman::wallNorth; using Pacman::wallEast; using  Pacman::wallSouth;using  Pacman::wallWest;
+	bool operator ==(const Pacman::FieldProp & a, const Pacman::FieldProp & b)
+	{
+		return a.col == b.col&&a.row == b.row ? true : false;
+	}
+	int ShortPathBFS(const Pacman::FieldProp & begin, const Pacman::FieldProp & end, const Pacman::GameField & field)
+	{
+		typedef Pacman::FieldProp op;
+		int h = field.height; int w = field.width;
+		if (begin.row >=h || begin.row<0 || begin.col>=w || begin.col < 0)
+			throw runtime_error("输入坐标不合法");
+		if (end.row >= h || end.row<0 || end.col>=w || end.col < 0)
+			throw runtime_error("输入坐标不合法");
+		if (begin == end) return 0;
+		bool decide[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
+		memset(decide, 0, sizeof(decide));
+		queue<Pacman::FieldProp > a;
+		a.push(op(begin.row, begin.col));
+		decide[begin.row][begin.col] = true;
+		int num = 1, path = 0;
+		while (path<=h*w)
+		{
+			++path; 
+			for (int i = 0; i < num; ++i)
+			{
+				 Pacman::FieldProp& temp = a.front();
+				 if (temp.row > 0 && field.fieldStatic[temp.row][temp.col] & wallNorth && !decide[temp.row - 1][temp.col])
+				 {
+					 if (temp.row - 1 == end.row&&temp.col == end.col) return path;
+					 ++num; a.push(op(temp.row - 1, temp.col));
+					 decide[temp.row - 1][temp.col] = true;
+				 }
+				 if (temp.row < h-1 && field.fieldStatic[temp.row+1][temp.col] & wallSouth && !decide[temp.row + 1][temp.col])
+				 {
+					 if (temp.row + 1 == end.row&&temp.col == end.col) return path;
+					 ++num; a.push(op(temp.row + 1, temp.col));
+					 decide[temp.row + 1][temp.col] = true;
+				 }
+				 if (temp.col < w - 1 && field.fieldStatic[temp.row][temp.col + 1] & wallEast && !decide[temp.row][temp.col + 1])
+				 {
+					 if (temp.row  == end.row&&temp.col + 1 == end.col) return path;
+					 ++num; a.push(op(temp.row , temp.col + 1));
+					 decide[temp.row][temp.col + 1] = true;
+				 }
+				 if (temp.col > 0 && field.fieldStatic[temp.row][temp.col - 1] & wallEast && !decide[temp.row][temp.col - 1])
+				 {
+					 if (temp.row == end.row&&temp.col - 1 == end.col) return path;
+					 ++num; a.push(op(temp.row, temp.col - 1));
+					 decide[temp.row][temp.col - 1] = true;
+				 }
+				 a.pop();
+			}
+		}
+		return -1;//代表begin 和 end无法连接
+	}
+}
+namespace data {
+	string loud[] = { "why are you so good at it","sorry i am not good at it",
+		"why would it be like this!",
+		"how many times have you made","tomorrow is an another day",
+	    "it comes to the season of 'white album'" };
+}
 int main()
 {
     Pacman::GameField gameField;
@@ -837,9 +905,10 @@ int main()
     gameField.DebugPrint();
 
     // 随机决定是否叫嚣
-    if (rand() % 6)
+    /*if (rand() % 6)
         gameField.WriteOutput((Pacman::Direction)(maxD - 1), "", data, globalData);
     else
-        gameField.WriteOutput((Pacman::Direction)(maxD - 1), "Hello, cruel world", data, globalData);
+        gameField.WriteOutput((Pacman::Direction)(maxD - 1), "Hello, cruel world", data, globalData);*/
+	gameField.WriteOutput((Pacman::Direction)(maxD - 1), data::loud[rand()%6], data, globalData);
     return 0;
 }
