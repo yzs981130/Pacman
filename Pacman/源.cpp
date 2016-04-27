@@ -1,37 +1,40 @@
 /*
-* ×÷Õß£ºzhouhy
-* Ê±¼ä£º2016/3/22 15:32:51
-* ×îºó¸üĞÂ£º2016/4/22 16:18
-* ¡¾¸üĞÂÄÚÈİ¡¿
-* ĞŞ¸´ÁËÎÄ¼ş²»´æÔÚÊ±²»ÄÜÍ¨¹ı¿ØÖÆÌ¨ÊäÈëµÄBug¡­¡­
-* ĞŞ¸ÄµÄ²¿Î»£º°üº¬ÁËfstream¿â¡¢ReadInputµÄº¯ÊıÌåÖĞÇ°¼¸ĞĞ·¢ÉúÁË±ä»¯£¬²»Ê¹ÓÃfreopenÁË¡£
-*
-* ¡¾ÃüÃû¹ßÀı¡¿
-*  r/R/y/Y£ºRow£¬ĞĞ£¬×İ×ø±ê
-*  c/C/x/X£ºColumn£¬ÁĞ£¬ºá×ø±ê
-*  Êı×éµÄÏÂ±ê¶¼ÊÇ[y][x]»ò[r][c]µÄË³Ğò
-*  Íæ¼Ò±àºÅ0123
-*
-* ¡¾×ø±êÏµ¡¿
-*   0 1 2 3 4 5 6 7 8
-* 0 +----------------> x
-* 1 |
-* 2 |
-* 3 |
-* 4 |
-* 5 |
-* 6 |
-* 7 |
-* 8 |
-*   v y
-*
-* ¡¾ÌáÊ¾¡¿Äã¿ÉÒÔÊ¹ÓÃ
-* #ifndef _BOTZONE_ONLINE
-* ÕâÑùµÄÔ¤±àÒëÖ¸ÁîÀ´Çø·ÖÔÚÏßÆÀ²âºÍ±¾µØÆÀ²â
-*
-* ¡¾ÌáÊ¾¡¿Ò»°ãµÄÎÄ±¾±à¼­Æ÷¶¼»áÖ§³Ö½«´úÂë¿éÕÛµşÆğÀ´
-* Èç¹ûÄã¾õµÃ×Ô´ø´úÂëÌ«¹ıÈß³¤£¬¿ÉÒÔ¿¼ÂÇ½«Õû¸önamespaceÕÛµş
-*/
+ * Pacman æ ·ä¾‹ç¨‹åº
+ * ä½œè€…ï¼šzhouhy
+ * æ—¶é—´ï¼š2016/3/22 15:32:51
+ * æœ€åæ›´æ–°ï¼š2016/4/24 17:18
+ * ã€æ›´æ–°å†…å®¹2ã€‘
+ * å–æ¶ˆäº†å¯¹è±†å­äº§ç”Ÿå™¨ä¸åˆæ³•ç§»åŠ¨çš„åˆ¤æ–­ï¼ˆå³ ActionValid å‡½æ•°ï¼‰
+ * ã€æ›´æ–°å†…å®¹ã€‘
+ * ä¿®å¤äº†æ–‡ä»¶ä¸å­˜åœ¨æ—¶ä¸èƒ½é€šè¿‡æ§åˆ¶å°è¾“å…¥çš„Bugâ€¦â€¦
+ * ä¿®æ”¹çš„éƒ¨ä½ï¼šåŒ…å«äº†fstreamåº“ã€ReadInputçš„å‡½æ•°ä½“ä¸­å‰å‡ è¡Œå‘ç”Ÿäº†å˜åŒ–ï¼Œä¸ä½¿ç”¨freopenäº†ã€‚
+ *
+ * ã€å‘½åæƒ¯ä¾‹ã€‘
+ *  r/R/y/Yï¼šRowï¼Œè¡Œï¼Œçºµåæ ‡
+ *  c/C/x/Xï¼šColumnï¼Œåˆ—ï¼Œæ¨ªåæ ‡
+ *  æ•°ç»„çš„ä¸‹æ ‡éƒ½æ˜¯[y][x]æˆ–[r][c]çš„é¡ºåº
+ *  ç©å®¶ç¼–å·0123
+ *
+ * ã€åæ ‡ç³»ã€‘
+ *   0 1 2 3 4 5 6 7 8
+ * 0 +----------------> x
+ * 1 |
+ * 2 |
+ * 3 |
+ * 4 |
+ * 5 |
+ * 6 |
+ * 7 |
+ * 8 |
+ *   v y
+ *
+ * ã€æç¤ºã€‘ä½ å¯ä»¥ä½¿ç”¨
+ * #ifndef _BOTZONE_ONLINE
+ * è¿™æ ·çš„é¢„ç¼–è¯‘æŒ‡ä»¤æ¥åŒºåˆ†åœ¨çº¿è¯„æµ‹å’Œæœ¬åœ°è¯„æµ‹
+ *
+ * ã€æç¤ºã€‘ä¸€èˆ¬çš„æ–‡æœ¬ç¼–è¾‘å™¨éƒ½ä¼šæ”¯æŒå°†ä»£ç å—æŠ˜å èµ·æ¥
+ * å¦‚æœä½ è§‰å¾—è‡ªå¸¦ä»£ç å¤ªè¿‡å†—é•¿ï¼Œå¯ä»¥è€ƒè™‘å°†æ•´ä¸ªnamespaceæŠ˜å 
+ */
 
 #include <fstream>
 #include <cstdio>
@@ -47,11 +50,11 @@
 
 #define FIELD_MAX_HEIGHT 20
 #define FIELD_MAX_WIDTH 20
-#define MAX_GENERATOR_COUNT 4 // Ã¿¸öÏóÏŞ1
+#define MAX_GENERATOR_COUNT 4 // æ¯ä¸ªè±¡é™1
 #define MAX_PLAYER_COUNT 4
 #define MAX_TURN 100
 
-// ÄãÒ²¿ÉÒÔÑ¡ÓÃ using namespace std; µ«ÊÇ»áÎÛÈ¾ÃüÃû¿Õ¼ä
+// ä½ ä¹Ÿå¯ä»¥é€‰ç”¨ using namespace std; ä½†æ˜¯ä¼šæ±¡æŸ“å‘½åç©ºé—´
 using std::string;
 using std::swap;
 using std::cin;
@@ -60,786 +63,785 @@ using std::endl;
 using std::getline;
 using std::runtime_error;
 
-// Æ½Ì¨Ìá¹©µÄ³Ô¶¹ÈËÏà¹ØÂß¼­´¦Àí³ÌĞò
+// å¹³å°æä¾›çš„åƒè±†äººç›¸å…³é€»è¾‘å¤„ç†ç¨‹åº
 namespace Pacman
 {
-    const time_t seed = time(0);
-    const int dx[] = {0, 1, 0, -1, 1, 1, -1, -1}, dy[] = {-1, 0, 1, 0, -1, 1, 1, -1};
+	const time_t seed = time(0);
+	const int dx[] = { 0, 1, 0, -1, 1, 1, -1, -1 }, dy[] = { -1, 0, 1, 0, -1, 1, 1, -1 };
 
-    // Ã¶¾Ù¶¨Òå£»Ê¹ÓÃÃ¶¾ÙËäÈ»»áÀË·Ñ¿Õ¼ä£¨sizeof(GridContentType) == 4£©£¬µ«ÊÇ¼ÆËã»ú´¦Àí32Î»µÄÊı×ÖĞ§ÂÊ¸ü¸ß
+	// æšä¸¾å®šä¹‰ï¼›ä½¿ç”¨æšä¸¾è™½ç„¶ä¼šæµªè´¹ç©ºé—´ï¼ˆsizeof(GridContentType) == 4ï¼‰ï¼Œä½†æ˜¯è®¡ç®—æœºå¤„ç†32ä½çš„æ•°å­—æ•ˆç‡æ›´é«˜
 
-    // Ã¿¸ö¸ñ×Ó¿ÉÄÜ±ä»¯µÄÄÚÈİ£¬»á²ÉÓÃ¡°»ò¡±Âß¼­½øĞĞ×éºÏ
-    enum GridContentType
-    {
-        empty = 0, // ÆäÊµ²»»áÓÃµ½
-        player1 = 1, // 1ºÅÍæ¼Ò
-        player2 = 2, // 2ºÅÍæ¼Ò
-        player3 = 4, // 3ºÅÍæ¼Ò
-        player4 = 8, // 4ºÅÍæ¼Ò
-        playerMask = 1 | 2 | 4 | 8, // ÓÃÓÚ¼ì²éÓĞÃ»ÓĞÍæ¼ÒµÈ
-        smallFruit = 16, // Ğ¡¶¹×Ó
-        largeFruit = 32 // ´ó¶¹×Ó
-    };
+	// æ¯ä¸ªæ ¼å­å¯èƒ½å˜åŒ–çš„å†…å®¹ï¼Œä¼šé‡‡ç”¨â€œæˆ–â€é€»è¾‘è¿›è¡Œç»„åˆ
+	enum GridContentType
+	{
+		empty = 0, // å…¶å®ä¸ä¼šç”¨åˆ°
+		player1 = 1, // 1å·ç©å®¶
+		player2 = 2, // 2å·ç©å®¶
+		player3 = 4, // 3å·ç©å®¶
+		player4 = 8, // 4å·ç©å®¶
+		playerMask = 1 | 2 | 4 | 8, // ç”¨äºæ£€æŸ¥æœ‰æ²¡æœ‰ç©å®¶ç­‰
+		smallFruit = 16, // å°è±†å­
+		largeFruit = 32 // å¤§è±†å­
+	};
 
-    // ÓÃÍæ¼ÒID»»È¡¸ñ×ÓÉÏÍæ¼ÒµÄ¶ş½øÖÆÎ»
-    GridContentType playerID2Mask[] = {player1, player2, player3, player4};
-    string playerID2str[] = {"0", "1", "2", "3"};
+	// ç”¨ç©å®¶IDæ¢å–æ ¼å­ä¸Šç©å®¶çš„äºŒè¿›åˆ¶ä½
+	GridContentType playerID2Mask[] = { player1, player2, player3, player4 };
+	string playerID2str[] = { "0", "1", "2", "3" };
 
-    // ÈÃÃ¶¾ÙÒ²¿ÉÒÔÓÃÕâĞ©ÔËËãÁË£¨²»¼Ó»á±àÒë´íÎó£©
-    template<typename T>
-    inline T operator |=(T &a, const T &b)
-    {
-        return a = static_cast<T>(static_cast<int>(a) | static_cast<int>(b));
-    }
-    template<typename T>
-    inline T operator |(const T &a, const T &b)
-    {
-        return static_cast<T>(static_cast<int>(a) | static_cast<int>(b));
-    }
-    template<typename T>
-    inline T operator &=(T &a, const T &b)
-    {
-        return a = static_cast<T>(static_cast<int>(a) & static_cast<int>(b));
-    }
-    template<typename T>
-    inline T operator &(const T &a, const T &b)
-    {
-        return static_cast<T>(static_cast<int>(a) & static_cast<int>(b));
-    }
-    template<typename T>
-    inline T operator ++(T &a)
-    {
-        return a = static_cast<T>(static_cast<int>(a) + 1);
-    }
-    template<typename T>
-    inline T operator ~(const T &a)
-    {
-        return static_cast<T>(~static_cast<int>(a));
-    }
+	// è®©æšä¸¾ä¹Ÿå¯ä»¥ç”¨è¿™äº›è¿ç®—äº†ï¼ˆä¸åŠ ä¼šç¼–è¯‘é”™è¯¯ï¼‰
+	template<typename T>
+	inline T operator |=(T &a, const T &b)
+	{
+		return a = static_cast<T>(static_cast<int>(a) | static_cast<int>(b));
+	}
+	template<typename T>
+	inline T operator |(const T &a, const T &b)
+	{
+		return static_cast<T>(static_cast<int>(a) | static_cast<int>(b));
+	}
+	template<typename T>
+	inline T operator &=(T &a, const T &b)
+	{
+		return a = static_cast<T>(static_cast<int>(a) & static_cast<int>(b));
+	}
+	template<typename T>
+	inline T operator &(const T &a, const T &b)
+	{
+		return static_cast<T>(static_cast<int>(a) & static_cast<int>(b));
+	}
+	template<typename T>
+	inline T operator ++(T &a)
+	{
+		return a = static_cast<T>(static_cast<int>(a) + 1);
+	}
+	template<typename T>
+	inline T operator ~(const T &a)
+	{
+		return static_cast<T>(~static_cast<int>(a));
+	}
 
-    // Ã¿¸ö¸ñ×Ó¹Ì¶¨µÄ¶«Î÷£¬»á²ÉÓÃ¡°»ò¡±Âß¼­½øĞĞ×éºÏ
-    enum GridStaticType
-    {
-        emptyWall = 0, // ÆäÊµ²»»áÓÃµ½
-        wallNorth = 1, // ±±Ç½£¨×İ×ø±ê¼õÉÙµÄ·½Ïò£©
-        wallEast = 2, // ¶«Ç½£¨ºá×ø±êÔö¼ÓµÄ·½Ïò£©
-        wallSouth = 4, // ÄÏÇ½£¨×İ×ø±êÔö¼ÓµÄ·½Ïò£©
-        wallWest = 8, // Î÷Ç½£¨ºá×ø±ê¼õÉÙµÄ·½Ïò£©
-        generator = 16 // ¶¹×Ó²úÉúÆ÷
-    };
+	// æ¯ä¸ªæ ¼å­å›ºå®šçš„ä¸œè¥¿ï¼Œä¼šé‡‡ç”¨â€œæˆ–â€é€»è¾‘è¿›è¡Œç»„åˆ
+	enum GridStaticType
+	{
+		emptyWall = 0, // å…¶å®ä¸ä¼šç”¨åˆ°
+		wallNorth = 1, // åŒ—å¢™ï¼ˆçºµåæ ‡å‡å°‘çš„æ–¹å‘ï¼‰
+		wallEast = 2, // ä¸œå¢™ï¼ˆæ¨ªåæ ‡å¢åŠ çš„æ–¹å‘ï¼‰
+		wallSouth = 4, // å—å¢™ï¼ˆçºµåæ ‡å¢åŠ çš„æ–¹å‘ï¼‰
+		wallWest = 8, // è¥¿å¢™ï¼ˆæ¨ªåæ ‡å‡å°‘çš„æ–¹å‘ï¼‰
+		generator = 16 // è±†å­äº§ç”Ÿå™¨
+	};
 
-    // ÓÃÒÆ¶¯·½Ïò»»È¡Õâ¸ö·½ÏòÉÏ×èµ²×ÅµÄÇ½µÄ¶ş½øÖÆÎ»
-    GridStaticType direction2OpposingWall[] = {wallNorth, wallEast, wallSouth, wallWest};
+	// ç”¨ç§»åŠ¨æ–¹å‘æ¢å–è¿™ä¸ªæ–¹å‘ä¸Šé˜»æŒ¡ç€çš„å¢™çš„äºŒè¿›åˆ¶ä½
+	GridStaticType direction2OpposingWall[] = { wallNorth, wallEast, wallSouth, wallWest };
 
-    // ·½Ïò£¬¿ÉÒÔ´úÈëdx¡¢dyÊı×é£¬Í¬Ê±Ò²¿ÉÒÔ×÷ÎªÍæ¼ÒµÄ¶¯×÷
-    enum Direction
-    {
-        stay = -1,
-        up = 0,
-        right = 1,
-        down = 2,
-        left = 3,
-        // ÏÂÃæµÄÕâ¼¸¸öÖ»ÊÇÎªÁË²úÉúÆ÷³ÌĞò·½±ã£¬²»»áÊµ¼ÊÓÃµ½
-        ur = 4, // ÓÒÉÏ
-        dr = 5, // ÓÒÏÂ
-        dl = 6, // ×óÏÂ
-        ul = 7 // ×óÉÏ
-    };
+	// æ–¹å‘ï¼Œå¯ä»¥ä»£å…¥dxã€dyæ•°ç»„ï¼ŒåŒæ—¶ä¹Ÿå¯ä»¥ä½œä¸ºç©å®¶çš„åŠ¨ä½œ
+	enum Direction
+	{
+		stay = -1,
+		up = 0,
+		right = 1,
+		down = 2,
+		left = 3,
+		// ä¸‹é¢çš„è¿™å‡ ä¸ªåªæ˜¯ä¸ºäº†äº§ç”Ÿå™¨ç¨‹åºæ–¹ä¾¿ï¼Œä¸ä¼šå®é™…ç”¨åˆ°
+		ur = 4, // å³ä¸Š
+		dr = 5, // å³ä¸‹
+		dl = 6, // å·¦ä¸‹
+		ul = 7 // å·¦ä¸Š
+	};
 
-    // ³¡µØÉÏ´øÓĞ×ø±êµÄÎï¼ş
-    struct FieldProp
-    {
-        int row, col;
-    };
+	// åœºåœ°ä¸Šå¸¦æœ‰åæ ‡çš„ç‰©ä»¶
+	struct FieldProp
+	{
+		int row, col;
+	};
 
-    // ³¡µØÉÏµÄÍæ¼Ò
-    struct Player: FieldProp
-    {
-        int strength;
-        int powerUpLeft;
-        bool dead;
-    };
+	// åœºåœ°ä¸Šçš„ç©å®¶
+	struct Player : FieldProp
+	{
+		int strength;
+		int powerUpLeft;
+		bool dead;
+	};
 
-    // »ØºÏĞÂ²úÉúµÄ¶¹×ÓµÄ×ø±ê
-    struct NewFruits
-    {
-        FieldProp newFruits[MAX_GENERATOR_COUNT * 8];
-        int newFruitCount;
-    } newFruits[MAX_TURN];
-    int newFruitsCount = 0;
+	// å›åˆæ–°äº§ç”Ÿçš„è±†å­çš„åæ ‡
+	struct NewFruits
+	{
+		FieldProp newFruits[MAX_GENERATOR_COUNT * 8];
+		int newFruitCount;
+	} newFruits[MAX_TURN];
+	int newFruitsCount = 0;
 
-    // ×´Ì¬×ªÒÆ¼ÇÂ¼½á¹¹
-    struct TurnStateTransfer
-    {
-        enum StatusChange // ¿É×éºÏ
-        {
-            none = 0,
-            ateSmall = 1,
-            ateLarge = 2,
-            powerUpCancel = 4,
-            die = 8,
-            error = 16
-        };
+	// çŠ¶æ€è½¬ç§»è®°å½•ç»“æ„
+	struct TurnStateTransfer
+	{
+		enum StatusChange // å¯ç»„åˆ
+		{
+			none = 0,
+			ateSmall = 1,
+			ateLarge = 2,
+			powerUpCancel = 4,
+			die = 8,
+			error = 16
+		};
 
-        // Íæ¼ÒÑ¡¶¨µÄ¶¯×÷
-        Direction actions[MAX_PLAYER_COUNT];
+		// ç©å®¶é€‰å®šçš„åŠ¨ä½œ
+		Direction actions[MAX_PLAYER_COUNT];
 
-        // ´Ë»ØºÏ¸ÃÍæ¼ÒµÄ×´Ì¬±ä»¯
-        StatusChange change[MAX_PLAYER_COUNT];
+		// æ­¤å›åˆè¯¥ç©å®¶çš„çŠ¶æ€å˜åŒ–
+		StatusChange change[MAX_PLAYER_COUNT];
 
-        // ´Ë»ØºÏ¸ÃÍæ¼ÒµÄÁ¦Á¿±ä»¯
-        int strengthDelta[MAX_PLAYER_COUNT];
-    };
+		// æ­¤å›åˆè¯¥ç©å®¶çš„åŠ›é‡å˜åŒ–
+		int strengthDelta[MAX_PLAYER_COUNT];
+	};
 
-    // ÓÎÏ·Ö÷ÒªÂß¼­´¦ÀíÀà£¬°üÀ¨ÊäÈëÊä³ö¡¢»ØºÏÑİËã¡¢×´Ì¬×ªÒÆ£¬È«¾ÖÎ¨Ò»
-    class GameField
-    {
-    private:
-        // ÎªÁË·½±ã£¬´ó¶àÊıÊôĞÔ¶¼²»ÊÇprivateµÄ
+	// æ¸¸æˆä¸»è¦é€»è¾‘å¤„ç†ç±»ï¼ŒåŒ…æ‹¬è¾“å…¥è¾“å‡ºã€å›åˆæ¼”ç®—ã€çŠ¶æ€è½¬ç§»ï¼Œå…¨å±€å”¯ä¸€
+	class GameField
+	{
+	private:
+		// ä¸ºäº†æ–¹ä¾¿ï¼Œå¤§å¤šæ•°å±æ€§éƒ½ä¸æ˜¯privateçš„
 
-        // ¼ÇÂ¼Ã¿»ØºÏµÄ±ä»¯£¨Õ»£©
-        TurnStateTransfer backtrack[MAX_TURN];
+		// è®°å½•æ¯å›åˆçš„å˜åŒ–ï¼ˆæ ˆï¼‰
+		TurnStateTransfer backtrack[MAX_TURN];
 
-        // Õâ¸ö¶ÔÏóÊÇ·ñÒÑ¾­´´½¨
-        static bool constructed;
+		// è¿™ä¸ªå¯¹è±¡æ˜¯å¦å·²ç»åˆ›å»º
+		static bool constructed;
 
-    public:
-        // ³¡µØµÄ³¤ºÍ¿í
-        int height, width;
-        int generatorCount;
-        int GENERATOR_INTERVAL, LARGE_FRUIT_DURATION, LARGE_FRUIT_ENHANCEMENT;
+	public:
+		// åœºåœ°çš„é•¿å’Œå®½
+		int height, width;
+		int generatorCount;
+		int GENERATOR_INTERVAL, LARGE_FRUIT_DURATION, LARGE_FRUIT_ENHANCEMENT;
 
-        // ³¡µØ¸ñ×Ó¹Ì¶¨µÄÄÚÈİ
-        GridStaticType fieldStatic[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
+		// åœºåœ°æ ¼å­å›ºå®šçš„å†…å®¹
+		GridStaticType fieldStatic[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
 
-        // ³¡µØ¸ñ×Ó»á±ä»¯µÄÄÚÈİ
-        GridContentType fieldContent[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
-        int generatorTurnLeft; // ¶àÉÙ»ØºÏºó²úÉú¶¹×Ó
-        int aliveCount; // ÓĞ¶àÉÙÍæ¼Ò´æ»î
-        int smallFruitCount;
-        int turnID;
-        FieldProp generators[MAX_GENERATOR_COUNT]; // ÓĞÄÄĞ©¶¹×Ó²úÉúÆ÷
-        Player players[MAX_PLAYER_COUNT]; // ÓĞÄÄĞ©Íæ¼Ò
+		// åœºåœ°æ ¼å­ä¼šå˜åŒ–çš„å†…å®¹
+		GridContentType fieldContent[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
+		int generatorTurnLeft; // å¤šå°‘å›åˆåäº§ç”Ÿè±†å­
+		int aliveCount; // æœ‰å¤šå°‘ç©å®¶å­˜æ´»
+		int smallFruitCount;
+		int turnID;
+		FieldProp generators[MAX_GENERATOR_COUNT]; // æœ‰å“ªäº›è±†å­äº§ç”Ÿå™¨
+		Player players[MAX_PLAYER_COUNT]; // æœ‰å“ªäº›ç©å®¶
 
-                                          // Íæ¼ÒÑ¡¶¨µÄ¶¯×÷
-        Direction actions[MAX_PLAYER_COUNT];
+		// ç©å®¶é€‰å®šçš„åŠ¨ä½œ
+		Direction actions[MAX_PLAYER_COUNT];
 
-        // »Ö¸´µ½ÉÏ´Î³¡µØ×´Ì¬¡£¿ÉÒÔÒ»Â·»Ö¸´µ½×î¿ªÊ¼¡£
-        // »Ö¸´Ê§°Ü£¨Ã»ÓĞ×´Ì¬¿É»Ö¸´£©·µ»Øfalse
-        bool PopState()
-        {
-            if (turnID <= 0)
-                return false;
+		// æ¢å¤åˆ°ä¸Šæ¬¡åœºåœ°çŠ¶æ€ã€‚å¯ä»¥ä¸€è·¯æ¢å¤åˆ°æœ€å¼€å§‹ã€‚
+		// æ¢å¤å¤±è´¥ï¼ˆæ²¡æœ‰çŠ¶æ€å¯æ¢å¤ï¼‰è¿”å›false
+		bool PopState()
+		{
+			if (turnID <= 0)
+				return false;
 
-            const TurnStateTransfer &bt = backtrack[--turnID];
-            int i, _;
+			const TurnStateTransfer &bt = backtrack[--turnID];
+			int i, _;
 
-            // µ¹×ÅÀ´»Ö¸´×´Ì¬
+			// å€’ç€æ¥æ¢å¤çŠ¶æ€
 
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
-            {
-                Player &_p = players[_];
-                GridContentType &content = fieldContent[_p.row][_p.col];
-                TurnStateTransfer::StatusChange change = bt.change[_];
+			for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+			{
+				Player &_p = players[_];
+				GridContentType &content = fieldContent[_p.row][_p.col];
+				TurnStateTransfer::StatusChange change = bt.change[_];
 
-                if (!_p.dead)
-                {
-                    // 5. ´ó¶¹»ØºÏ»Ö¸´
-                    if (_p.powerUpLeft || change & TurnStateTransfer::powerUpCancel)
-                        _p.powerUpLeft++;
+				if (!_p.dead)
+				{
+					// 5. å¤§è±†å›åˆæ¢å¤
+					if (_p.powerUpLeft || change & TurnStateTransfer::powerUpCancel)
+						_p.powerUpLeft++;
 
-                    // 4. ÍÂ³ö¶¹×Ó
-                    if (change & TurnStateTransfer::ateSmall)
-                    {
-                        content |= smallFruit;
-                        smallFruitCount++;
-                    }
-                    else if (change & TurnStateTransfer::ateLarge)
-                    {
-                        content |= largeFruit;
-                        _p.powerUpLeft -= LARGE_FRUIT_DURATION;
-                    }
-                }
+					// 4. åå‡ºè±†å­
+					if (change & TurnStateTransfer::ateSmall)
+					{
+						content |= smallFruit;
+						smallFruitCount++;
+					}
+					else if (change & TurnStateTransfer::ateLarge)
+					{
+						content |= largeFruit;
+						_p.powerUpLeft -= LARGE_FRUIT_DURATION;
+					}
+				}
 
-                // 2. »êÙâ¹éÀ´
-                if (change & TurnStateTransfer::die)
-                {
-                    _p.dead = false;
-                    aliveCount++;
-                    content |= playerID2Mask[_];
-                }
+				// 2. é­‚å…®å½’æ¥
+				if (change & TurnStateTransfer::die)
+				{
+					_p.dead = false;
+					aliveCount++;
+					content |= playerID2Mask[_];
+				}
 
-                // 1. ÒÆĞÎ»»Ó°
-                if (!_p.dead && bt.actions[_] != stay)
-                {
-                    fieldContent[_p.row][_p.col] &= ~playerID2Mask[_];
-                    _p.row = (_p.row - dy[bt.actions[_]] + height) % height;
-                    _p.col = (_p.col - dx[bt.actions[_]] + width) % width;
-                    fieldContent[_p.row][_p.col] |= playerID2Mask[_];
-                }
+				// 1. ç§»å½¢æ¢å½±
+				if (!_p.dead && bt.actions[_] != stay)
+				{
+					fieldContent[_p.row][_p.col] &= ~playerID2Mask[_];
+					_p.row = (_p.row - dy[bt.actions[_]] + height) % height;
+					_p.col = (_p.col - dx[bt.actions[_]] + width) % width;
+					fieldContent[_p.row][_p.col] |= playerID2Mask[_];
+				}
 
-                // 0. ¾ÈÊê²»ºÏ·¨µÄÁé»ê
-                if (change & TurnStateTransfer::error)
-                {
-                    _p.dead = false;
-                    aliveCount++;
-                    content |= playerID2Mask[_];
-                }
+				// 0. æ•‘èµä¸åˆæ³•çš„çµé­‚
+				if (change & TurnStateTransfer::error)
+				{
+					_p.dead = false;
+					aliveCount++;
+					content |= playerID2Mask[_];
+				}
 
-                // *. »Ö¸´Á¦Á¿
-                if (!_p.dead)
-                    _p.strength -= bt.strengthDelta[_];
-            }
+				// *. æ¢å¤åŠ›é‡
+				if (!_p.dead)
+					_p.strength -= bt.strengthDelta[_];
+			}
 
-            // 3. ÊÕ»Ø¶¹×Ó
-            if (generatorTurnLeft == GENERATOR_INTERVAL)
-            {
-                generatorTurnLeft = 1;
-                NewFruits &fruits = newFruits[--newFruitsCount];
-                for (i = 0; i < fruits.newFruitCount; i++)
-                {
-                    fieldContent[fruits.newFruits[i].row][fruits.newFruits[i].col] &= ~smallFruit;
-                    smallFruitCount--;
-                }
-            }
-            else
-                generatorTurnLeft++;
+			// 3. æ”¶å›è±†å­
+			if (generatorTurnLeft == GENERATOR_INTERVAL)
+			{
+				generatorTurnLeft = 1;
+				NewFruits &fruits = newFruits[--newFruitsCount];
+				for (i = 0; i < fruits.newFruitCount; i++)
+				{
+					fieldContent[fruits.newFruits[i].row][fruits.newFruits[i].col] &= ~smallFruit;
+					smallFruitCount--;
+				}
+			}
+			else
+				generatorTurnLeft++;
 
-            return true;
-        }
+			return true;
+		}
 
-        // ÅĞ¶ÏÖ¸¶¨Íæ¼ÒÏòÖ¸¶¨·½ÏòÒÆ¶¯ÊÇ²»ÊÇºÏ·¨µÄ£¨Ã»ÓĞ×²Ç½£©
-        inline bool ActionValid(int playerID, Direction &dir) const
-        {
-            if (dir == stay)
-                return true;
-            const Player &p = players[playerID];
-            const GridStaticType &s = fieldStatic[p.row][p.col];
-            return dir >= -1 && dir < 4 && !(s & direction2OpposingWall[dir]);
-        }
+		// åˆ¤æ–­æŒ‡å®šç©å®¶å‘æŒ‡å®šæ–¹å‘ç§»åŠ¨æ˜¯ä¸æ˜¯åˆæ³•çš„ï¼ˆæ²¡æœ‰æ’å¢™ï¼‰
+		inline bool ActionValid(int playerID, Direction &dir) const
+		{
+			if (dir == stay)
+				return true;
+			const Player &p = players[playerID];
+			const GridStaticType &s = fieldStatic[p.row][p.col];
+			return dir >= -1 && dir < 4 && !(s & direction2OpposingWall[dir]);
+		}
 
-        // ÔÚÏòactionsĞ´ÈëÍæ¼Ò¶¯×÷ºó£¬ÑİËãÏÂÒ»»ØºÏ¾ÖÃæ£¬²¢¼ÇÂ¼Ö®Ç°ËùÓĞµÄ³¡µØ×´Ì¬£¬¿É¹©ÈÕºó»Ö¸´¡£
-        // ÊÇÖÕ¾ÖµÄ»°¾Í·µ»Øfalse
-        bool NextTurn()
-        {
-            int _, i, j;
+		// åœ¨å‘actionså†™å…¥ç©å®¶åŠ¨ä½œåï¼Œæ¼”ç®—ä¸‹ä¸€å›åˆå±€é¢ï¼Œå¹¶è®°å½•ä¹‹å‰æ‰€æœ‰çš„åœºåœ°çŠ¶æ€ï¼Œå¯ä¾›æ—¥åæ¢å¤ã€‚
+		// æ˜¯ç»ˆå±€çš„è¯å°±è¿”å›false
+		bool NextTurn()
+		{
+			int _, i, j;
 
-            TurnStateTransfer &bt = backtrack[turnID];
-            memset(&bt, 0, sizeof(bt));
+			TurnStateTransfer &bt = backtrack[turnID];
+			memset(&bt, 0, sizeof(bt));
 
-            // 0. É±ËÀ²»ºÏ·¨ÊäÈë
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
-            {
-                Player &p = players[_];
-                if (!p.dead)
-                {
-                    Direction &action = actions[_];
-                    if (action == stay)
-                        continue;
+			// 0. æ€æ­»ä¸åˆæ³•è¾“å…¥
+			for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+			{
+				Player &p = players[_];
+				if (!p.dead)
+				{
+					Direction &action = actions[_];
+					if (action == stay)
+						continue;
 
-                    if (!ActionValid(_, action))
-                    {
-                        bt.strengthDelta[_] += -p.strength;
-                        bt.change[_] = TurnStateTransfer::error;
-                        fieldContent[p.row][p.col] &= ~playerID2Mask[_];
-                        p.strength = 0;
-                        p.dead = true;
-                        aliveCount--;
-                    }
-                    else
-                    {
-                        // Óöµ½±È×Ô¼ºÇ¿¡á×³µÄÍæ¼ÒÊÇ²»ÄÜÇ°½øµÄ
-                        GridContentType target = fieldContent
-                            [(p.row + dy[action] + height) % height]
-                        [(p.col + dx[action] + width) % width];
-                        if (target & playerMask)
-                            for (i = 0; i < MAX_PLAYER_COUNT; i++)
-                                if (target & playerID2Mask[i] && players[i].strength > p.strength)
-                                    action = stay;
-                    }
-                }
-            }
+					if (!ActionValid(_, action))
+					{
+						bt.strengthDelta[_] += -p.strength;
+						bt.change[_] = TurnStateTransfer::error;
+						fieldContent[p.row][p.col] &= ~playerID2Mask[_];
+						p.strength = 0;
+						p.dead = true;
+						aliveCount--;
+					}
+					else
+					{
+						// é‡åˆ°æ¯”è‡ªå·±å¼ºâ™‚å£®çš„ç©å®¶æ˜¯ä¸èƒ½å‰è¿›çš„
+						GridContentType target = fieldContent
+							[(p.row + dy[action] + height) % height]
+							[(p.col + dx[action] + width) % width];
+						if (target & playerMask)
+							for (i = 0; i < MAX_PLAYER_COUNT; i++)
+								if (target & playerID2Mask[i] && players[i].strength > p.strength)
+									action = stay;
+					}
+				}
+			}
 
-            // 1. Î»ÖÃ±ä»¯
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
-            {
-                Player &_p = players[_];
-                if (_p.dead)
-                    continue;
+			// 1. ä½ç½®å˜åŒ–
+			for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+			{
+				Player &_p = players[_];
+				if (_p.dead)
+					continue;
 
-                bt.actions[_] = actions[_];
+				bt.actions[_] = actions[_];
 
-                if (actions[_] == stay)
-                    continue;
+				if (actions[_] == stay)
+					continue;
 
-                // ÒÆ¶¯
-                fieldContent[_p.row][_p.col] &= ~playerID2Mask[_];
-                _p.row = (_p.row + dy[actions[_]] + height) % height;
-                _p.col = (_p.col + dx[actions[_]] + width) % width;
-                fieldContent[_p.row][_p.col] |= playerID2Mask[_];
-            }
+				// ç§»åŠ¨
+				fieldContent[_p.row][_p.col] &= ~playerID2Mask[_];
+				_p.row = (_p.row + dy[actions[_]] + height) % height;
+				_p.col = (_p.col + dx[actions[_]] + width) % width;
+				fieldContent[_p.row][_p.col] |= playerID2Mask[_];
+			}
 
-            // 2. Íæ¼Ò»¥Å¹
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
-            {
-                Player &_p = players[_];
-                if (_p.dead)
-                    continue;
+			// 2. ç©å®¶äº’æ®´
+			for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+			{
+				Player &_p = players[_];
+				if (_p.dead)
+					continue;
 
-                // ÅĞ¶ÏÊÇ·ñÓĞÍæ¼ÒÔÚÒ»Æğ
-                int player, containedCount = 0;
-                int containedPlayers[MAX_PLAYER_COUNT];
-                for (player = 0; player < MAX_PLAYER_COUNT; player++)
-                    if (fieldContent[_p.row][_p.col] & playerID2Mask[player])
-                        containedPlayers[containedCount++] = player;
+				// åˆ¤æ–­æ˜¯å¦æœ‰ç©å®¶åœ¨ä¸€èµ·
+				int player, containedCount = 0;
+				int containedPlayers[MAX_PLAYER_COUNT];
+				for (player = 0; player < MAX_PLAYER_COUNT; player++)
+					if (fieldContent[_p.row][_p.col] & playerID2Mask[player])
+						containedPlayers[containedCount++] = player;
 
-                if (containedCount > 1)
-                {
-                    // NAIVE
-                    for (i = 0; i < containedCount; i++)
-                        for (j = 0; j < containedCount - i - 1; j++)
-                            if (players[containedPlayers[j]].strength < players[containedPlayers[j + 1]].strength)
-                                swap(containedPlayers[j], containedPlayers[j + 1]);
+				if (containedCount > 1)
+				{
+					// NAIVE
+					for (i = 0; i < containedCount; i++)
+						for (j = 0; j < containedCount - i - 1; j++)
+							if (players[containedPlayers[j]].strength < players[containedPlayers[j + 1]].strength)
+								swap(containedPlayers[j], containedPlayers[j + 1]);
 
-                    int begin;
-                    for (begin = 1; begin < containedCount; begin++)
-                        if (players[containedPlayers[begin - 1]].strength > players[containedPlayers[begin]].strength)
-                            break;
+					int begin;
+					for (begin = 1; begin < containedCount; begin++)
+						if (players[containedPlayers[begin - 1]].strength > players[containedPlayers[begin]].strength)
+							break;
 
-                    // ÕâĞ©Íæ¼Ò½«»á±»É±ËÀ
-                    int lootedStrength = 0;
-                    for (i = begin; i < containedCount; i++)
-                    {
-                        int id = containedPlayers[i];
-                        Player &p = players[id];
+					// è¿™äº›ç©å®¶å°†ä¼šè¢«æ€æ­»
+					int lootedStrength = 0;
+					for (i = begin; i < containedCount; i++)
+					{
+						int id = containedPlayers[i];
+						Player &p = players[id];
 
-                        // ´Ó¸ñ×ÓÉÏÒÆ×ß
-                        fieldContent[p.row][p.col] &= ~playerID2Mask[id];
-                        p.dead = true;
-                        int drop = p.strength / 2;
-                        bt.strengthDelta[id] += -drop;
-                        bt.change[id] |= TurnStateTransfer::die;
-                        lootedStrength += drop;
-                        p.strength -= drop;
-                        aliveCount--;
-                    }
+						// ä»æ ¼å­ä¸Šç§»èµ°
+						fieldContent[p.row][p.col] &= ~playerID2Mask[id];
+						p.dead = true;
+						int drop = p.strength / 2;
+						bt.strengthDelta[id] += -drop;
+						bt.change[id] |= TurnStateTransfer::die;
+						lootedStrength += drop;
+						p.strength -= drop;
+						aliveCount--;
+					}
 
-                    // ·ÖÅä¸øÆäËûÍæ¼Ò
-                    int inc = lootedStrength / begin;
-                    for (i = 0; i < begin; i++)
-                    {
-                        int id = containedPlayers[i];
-                        Player &p = players[id];
-                        bt.strengthDelta[id] += inc;
-                        p.strength += inc;
-                    }
-                }
-            }
+					// åˆ†é…ç»™å…¶ä»–ç©å®¶
+					int inc = lootedStrength / begin;
+					for (i = 0; i < begin; i++)
+					{
+						int id = containedPlayers[i];
+						Player &p = players[id];
+						bt.strengthDelta[id] += inc;
+						p.strength += inc;
+					}
+				}
+			}
 
-            // 3. ²úÉú¶¹×Ó
-            if (--generatorTurnLeft == 0)
-            {
-                generatorTurnLeft = GENERATOR_INTERVAL;
-                NewFruits &fruits = newFruits[newFruitsCount++];
-                fruits.newFruitCount = 0;
-                for (i = 0; i < generatorCount; i++)
-                    for (Direction d = up; d < 8; ++d)
-                    {
-                        // È¡Óà£¬´©¹ı³¡µØ±ß½ç
-                        int r = (generators[i].row + dy[d] + height) % height, c = (generators[i].col + dx[d] + width) % width;
-                        if (fieldStatic[r][c] & generator || fieldContent[r][c] & (smallFruit | largeFruit))
-                            continue;
-                        fieldContent[r][c] |= smallFruit;
-                        fruits.newFruits[fruits.newFruitCount].row = r;
-                        fruits.newFruits[fruits.newFruitCount++].col = c;
-                        smallFruitCount++;
-                    }
-            }
+			// 3. äº§ç”Ÿè±†å­
+			if (--generatorTurnLeft == 0)
+			{
+				generatorTurnLeft = GENERATOR_INTERVAL;
+				NewFruits &fruits = newFruits[newFruitsCount++];
+				fruits.newFruitCount = 0;
+				for (i = 0; i < generatorCount; i++)
+					for (Direction d = up; d < 8; ++d)
+					{
+						// å–ä½™ï¼Œç©¿è¿‡åœºåœ°è¾¹ç•Œ
+						int r = (generators[i].row + dy[d] + height) % height, c = (generators[i].col + dx[d] + width) % width;
+						if (fieldStatic[r][c] & generator || fieldContent[r][c] & (smallFruit | largeFruit))
+							continue;
+						fieldContent[r][c] |= smallFruit;
+						fruits.newFruits[fruits.newFruitCount].row = r;
+						fruits.newFruits[fruits.newFruitCount++].col = c;
+						smallFruitCount++;
+					}
+			}
 
-            // 4. ³Ôµô¶¹×Ó
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
-            {
-                Player &_p = players[_];
-                if (_p.dead)
-                    continue;
+			// 4. åƒæ‰è±†å­
+			for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+			{
+				Player &_p = players[_];
+				if (_p.dead)
+					continue;
 
-                GridContentType &content = fieldContent[_p.row][_p.col];
+				GridContentType &content = fieldContent[_p.row][_p.col];
 
-                // Ö»ÓĞÔÚ¸ñ×ÓÉÏÖ»ÓĞ×Ô¼ºµÄÊ±ºò²ÅÄÜ³Ôµô¶¹×Ó
-                if (content & playerMask & ~playerID2Mask[_])
-                    continue;
+				// åªæœ‰åœ¨æ ¼å­ä¸Šåªæœ‰è‡ªå·±çš„æ—¶å€™æ‰èƒ½åƒæ‰è±†å­
+				if (content & playerMask & ~playerID2Mask[_])
+					continue;
 
-                if (content & smallFruit)
-                {
-                    content &= ~smallFruit;
-                    _p.strength++;
-                    bt.strengthDelta[_]++;
-                    smallFruitCount--;
-                    bt.change[_] |= TurnStateTransfer::ateSmall;
-                }
-                else if (content & largeFruit)
-                {
-                    content &= ~largeFruit;
-                    if (_p.powerUpLeft == 0)
-                    {
-                        _p.strength += LARGE_FRUIT_ENHANCEMENT;
-                        bt.strengthDelta[_] += LARGE_FRUIT_ENHANCEMENT;
-                    }
-                    _p.powerUpLeft += LARGE_FRUIT_DURATION;
-                    bt.change[_] |= TurnStateTransfer::ateLarge;
-                }
-            }
+				if (content & smallFruit)
+				{
+					content &= ~smallFruit;
+					_p.strength++;
+					bt.strengthDelta[_]++;
+					smallFruitCount--;
+					bt.change[_] |= TurnStateTransfer::ateSmall;
+				}
+				else if (content & largeFruit)
+				{
+					content &= ~largeFruit;
+					if (_p.powerUpLeft == 0)
+					{
+						_p.strength += LARGE_FRUIT_ENHANCEMENT;
+						bt.strengthDelta[_] += LARGE_FRUIT_ENHANCEMENT;
+					}
+					_p.powerUpLeft += LARGE_FRUIT_DURATION;
+					bt.change[_] |= TurnStateTransfer::ateLarge;
+				}
+			}
 
-            // 5. ´ó¶¹»ØºÏ¼õÉÙ
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
-            {
-                Player &_p = players[_];
-                if (_p.dead)
-                    continue;
+			// 5. å¤§è±†å›åˆå‡å°‘
+			for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+			{
+				Player &_p = players[_];
+				if (_p.dead)
+					continue;
 
-                if (_p.powerUpLeft > 0 && --_p.powerUpLeft == 0)
-                {
-                    _p.strength -= LARGE_FRUIT_ENHANCEMENT;
-                    bt.change[_] |= TurnStateTransfer::powerUpCancel;
-                    bt.strengthDelta[_] += -LARGE_FRUIT_ENHANCEMENT;
-                }
-            }
+				if (_p.powerUpLeft > 0 && --_p.powerUpLeft == 0)
+				{
+					_p.strength -= LARGE_FRUIT_ENHANCEMENT;
+					bt.change[_] |= TurnStateTransfer::powerUpCancel;
+					bt.strengthDelta[_] += -LARGE_FRUIT_ENHANCEMENT;
+				}
+			}
 
-            ++turnID;
+			++turnID;
 
-            // ÊÇ·ñÖ»Ê£Ò»ÈË£¿
-            if (aliveCount <= 1)
-            {
-                for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
-                    if (!players[_].dead)
-                    {
-                        bt.strengthDelta[_] += smallFruitCount;
-                        players[_].strength += smallFruitCount;
-                    }
-                return false;
-            }
+			// æ˜¯å¦åªå‰©ä¸€äººï¼Ÿ
+			if (aliveCount <= 1)
+			{
+				for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+					if (!players[_].dead)
+					{
+						bt.strengthDelta[_] += smallFruitCount;
+						players[_].strength += smallFruitCount;
+					}
+				return false;
+			}
 
-            // ÊÇ·ñ»ØºÏ³¬ÏŞ£¿
-            if (turnID >= 100)
-                return false;
+			// æ˜¯å¦å›åˆè¶…é™ï¼Ÿ
+			if (turnID >= 100)
+				return false;
 
-            return true;
-        }
+			return true;
+		}
 
-        // ¶ÁÈ¡²¢½âÎö³ÌĞòÊäÈë£¬±¾µØµ÷ÊÔ»òÌá½»Æ½Ì¨Ê¹ÓÃ¶¼¿ÉÒÔ¡£
-        // Èç¹ûÔÚ±¾µØµ÷ÊÔ£¬³ÌĞò»áÏÈÊÔ×Å¶ÁÈ¡²ÎÊıÖĞÖ¸¶¨µÄÎÄ¼ş×÷ÎªÊäÈëÎÄ¼ş£¬Ê§°ÜºóÔÙÑ¡ÔñµÈ´ıÓÃ»§Ö±½ÓÊäÈë¡£
-        // ±¾µØµ÷ÊÔÊ±¿ÉÒÔ½ÓÊÜ¶àĞĞÒÔ±ã²Ù×÷£¬WindowsÏÂ¿ÉÒÔÓÃ Ctrl-Z »òÒ»¸ö¡¾¿ÕĞĞ+»Ø³µ¡¿±íÊ¾ÊäÈë½áÊø£¬µ«ÊÇÔÚÏßÆÀ²âÖ»Ğè½ÓÊÜµ¥ĞĞ¼´¿É¡£
-        // localFileName ¿ÉÒÔÎªNULL
-        // obtainedData »áÊä³ö×Ô¼ºÉÏ»ØºÏ´æ´¢¹©±¾»ØºÏÊ¹ÓÃµÄÊı¾İ
-        // obtainedGlobalData »áÊä³ö×Ô¼ºµÄ Bot ÉÏÒÔÇ°´æ´¢µÄÊı¾İ
-        // ·µ»ØÖµÊÇ×Ô¼ºµÄ playerID
-        int ReadInput(const char *localFileName, string &obtainedData, string &obtainedGlobalData)
-        {
-            string str, chunk;
+		// è¯»å–å¹¶è§£æç¨‹åºè¾“å…¥ï¼Œæœ¬åœ°è°ƒè¯•æˆ–æäº¤å¹³å°ä½¿ç”¨éƒ½å¯ä»¥ã€‚
+		// å¦‚æœåœ¨æœ¬åœ°è°ƒè¯•ï¼Œç¨‹åºä¼šå…ˆè¯•ç€è¯»å–å‚æ•°ä¸­æŒ‡å®šçš„æ–‡ä»¶ä½œä¸ºè¾“å…¥æ–‡ä»¶ï¼Œå¤±è´¥åå†é€‰æ‹©ç­‰å¾…ç”¨æˆ·ç›´æ¥è¾“å…¥ã€‚
+		// æœ¬åœ°è°ƒè¯•æ—¶å¯ä»¥æ¥å—å¤šè¡Œä»¥ä¾¿æ“ä½œï¼ŒWindowsä¸‹å¯ä»¥ç”¨ Ctrl-Z æˆ–ä¸€ä¸ªã€ç©ºè¡Œ+å›è½¦ã€‘è¡¨ç¤ºè¾“å…¥ç»“æŸï¼Œä½†æ˜¯åœ¨çº¿è¯„æµ‹åªéœ€æ¥å—å•è¡Œå³å¯ã€‚
+		// localFileName å¯ä»¥ä¸ºNULL
+		// obtainedData ä¼šè¾“å‡ºè‡ªå·±ä¸Šå›åˆå­˜å‚¨ä¾›æœ¬å›åˆä½¿ç”¨çš„æ•°æ®
+		// obtainedGlobalData ä¼šè¾“å‡ºè‡ªå·±çš„ Bot ä¸Šä»¥å‰å­˜å‚¨çš„æ•°æ®
+		// è¿”å›å€¼æ˜¯è‡ªå·±çš„ playerID
+		int ReadInput(const char *localFileName, string &obtainedData, string &obtainedGlobalData)
+		{
+			string str, chunk;
 #ifdef _BOTZONE_ONLINE
-            std::ios::sync_with_stdio(false); //¦Ø\\)
-            getline(cin, str);
+			std::ios::sync_with_stdio(false); //Ï‰\\)
+			getline(cin, str);
 #else
-            if (localFileName)
-            {
-                std::ifstream fin(localFileName);
-                if (fin)
-                    while (getline(fin, chunk) && chunk != "")
-                        str += chunk;
-                else
-                    while (getline(cin, chunk) && chunk != "")
-                        str += chunk;
-            }
-            else
-                while (getline(cin, chunk) && chunk != "")
-                    str += chunk;
+			if (localFileName)
+			{
+				std::ifstream fin(localFileName);
+				if (fin)
+					while (getline(fin, chunk) && chunk != "")
+						str += chunk;
+				else
+					while (getline(cin, chunk) && chunk != "")
+						str += chunk;
+			}
+			else
+				while (getline(cin, chunk) && chunk != "")
+					str += chunk;
 #endif
-            Json::Reader reader;
-            Json::Value input;
-            reader.parse(str, input);
+			Json::Reader reader;
+			Json::Value input;
+			reader.parse(str, input);
 
-            int len = input["requests"].size();
+			int len = input["requests"].size();
 
-            // ¶ÁÈ¡³¡µØ¾²Ì¬×´¿ö
-            Json::Value field = input["requests"][(Json::Value::UInt) 0],
-                staticField = field["static"], // Ç½ÃæºÍ²úÉúÆ÷
-                contentField = field["content"]; // ¶¹×ÓºÍÍæ¼Ò
-            height = field["height"].asInt();
-            width = field["width"].asInt();
-            LARGE_FRUIT_DURATION = field["LARGE_FRUIT_DURATION"].asInt();
-            LARGE_FRUIT_ENHANCEMENT = field["LARGE_FRUIT_ENHANCEMENT"].asInt();
-            generatorTurnLeft = GENERATOR_INTERVAL = field["GENERATOR_INTERVAL"].asInt();
+			// è¯»å–åœºåœ°é™æ€çŠ¶å†µ
+			Json::Value field = input["requests"][(Json::Value::UInt) 0],
+				staticField = field["static"], // å¢™é¢å’Œäº§ç”Ÿå™¨
+				contentField = field["content"]; // è±†å­å’Œç©å®¶
+			height = field["height"].asInt();
+			width = field["width"].asInt();
+			LARGE_FRUIT_DURATION = field["LARGE_FRUIT_DURATION"].asInt();
+			LARGE_FRUIT_ENHANCEMENT = field["LARGE_FRUIT_ENHANCEMENT"].asInt();
+			generatorTurnLeft = GENERATOR_INTERVAL = field["GENERATOR_INTERVAL"].asInt();
 
-            PrepareInitialField(staticField, contentField);
+			PrepareInitialField(staticField, contentField);
 
-            // ¸ù¾İÀúÊ·»Ö¸´¾ÖÃæ
-            for (int i = 1; i < len; i++)
-            {
-                Json::Value req = input["requests"][i];
-                for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
-                    if (!players[_].dead)
-                        actions[_] = (Direction)req[playerID2str[_]]["action"].asInt();
-                NextTurn();
-            }
+			// æ ¹æ®å†å²æ¢å¤å±€é¢
+			for (int i = 1; i < len; i++)
+			{
+				Json::Value req = input["requests"][i];
+				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
+					if (!players[_].dead)
+						actions[_] = (Direction)req[playerID2str[_]]["action"].asInt();
+				NextTurn();
+			}
 
-            obtainedData = input["data"].asString();
-            obtainedGlobalData = input["globaldata"].asString();
+			obtainedData = input["data"].asString();
+			obtainedGlobalData = input["globaldata"].asString();
 
-            return field["id"].asInt();
-        }
+			return field["id"].asInt();
+		}
 
-        // ¸ù¾İ static ºÍ content Êı×é×¼±¸³¡µØµÄ³õÊ¼×´¿ö
-        void PrepareInitialField(const Json::Value &staticField, const Json::Value &contentField)
-        {
-            int r, c, gid = 0;
-            generatorCount = 0;
-            aliveCount = 0;
-            smallFruitCount = 0;
-            generatorTurnLeft = GENERATOR_INTERVAL;
-            for (r = 0; r < height; r++)
-                for (c = 0; c < width; c++)
-                {
-                    GridContentType &content = fieldContent[r][c] = (GridContentType)contentField[r][c].asInt();
-                    GridStaticType &s = fieldStatic[r][c] = (GridStaticType)staticField[r][c].asInt();
-                    if (s & generator)
-                    {
-                        generators[gid].row = r;
-                        generators[gid++].col = c;
-                        generatorCount++;
-                    }
-                    if (content & smallFruit)
-                        smallFruitCount++;
-                    for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
-                        if (content & playerID2Mask[_])
-                        {
-                            Player &p = players[_];
-                            p.col = c;
-                            p.row = r;
-                            p.powerUpLeft = 0;
-                            p.strength = 1;
-                            p.dead = false;
-                            aliveCount++;
-                        }
-                }
-        }
+		// æ ¹æ® static å’Œ content æ•°ç»„å‡†å¤‡åœºåœ°çš„åˆå§‹çŠ¶å†µ
+		void PrepareInitialField(const Json::Value &staticField, const Json::Value &contentField)
+		{
+			int r, c, gid = 0;
+			generatorCount = 0;
+			aliveCount = 0;
+			smallFruitCount = 0;
+			generatorTurnLeft = GENERATOR_INTERVAL;
+			for (r = 0; r < height; r++)
+				for (c = 0; c < width; c++)
+				{
+					GridContentType &content = fieldContent[r][c] = (GridContentType)contentField[r][c].asInt();
+					GridStaticType &s = fieldStatic[r][c] = (GridStaticType)staticField[r][c].asInt();
+					if (s & generator)
+					{
+						generators[gid].row = r;
+						generators[gid++].col = c;
+						generatorCount++;
+					}
+					if (content & smallFruit)
+						smallFruitCount++;
+					for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
+						if (content & playerID2Mask[_])
+						{
+							Player &p = players[_];
+							p.col = c;
+							p.row = r;
+							p.powerUpLeft = 0;
+							p.strength = 1;
+							p.dead = false;
+							aliveCount++;
+						}
+				}
+		}
 
-        // Íê³É¾ö²ß£¬Êä³ö½á¹û¡£
-        // action ±íÊ¾±¾»ØºÏµÄÒÆ¶¯·½Ïò£¬stay Îª²»ÒÆ¶¯
-        // tauntText ±íÊ¾ÏëÒª½ĞÏùµÄÑÔÓï£¬¿ÉÒÔÊÇÈÎÒâ×Ö·û´®£¬³ıÁËÏÔÊ¾ÔÚÆÁÄ»ÉÏ²»»áÓĞÈÎºÎ×÷ÓÃ£¬Áô¿Õ±íÊ¾²»½ĞÏù
-        // data ±íÊ¾×Ô¼ºÏë´æ´¢¹©ÏÂÒ»»ØºÏÊ¹ÓÃµÄÊı¾İ£¬Áô¿Õ±íÊ¾É¾³ı
-        // globalData ±íÊ¾×Ô¼ºÏë´æ´¢¹©ÒÔºóÊ¹ÓÃµÄÊı¾İ£¨Ìæ»»£©£¬Õâ¸öÊı¾İ¿ÉÒÔ¿ç¶Ô¾ÖÊ¹ÓÃ£¬»áÒ»Ö±°ó¶¨ÔÚÕâ¸ö Bot ÉÏ£¬Áô¿Õ±íÊ¾É¾³ı
-        void WriteOutput(Direction action, string tauntText = "", string data = "", string globalData = "") const
-        {
-            Json::Value ret;
-            ret["response"]["action"] = action;
-            ret["response"]["tauntText"] = tauntText;
-            ret["data"] = data;
-            ret["globaldata"] = globalData;
-            ret["debug"] = (Json::Int)seed;
+		// å®Œæˆå†³ç­–ï¼Œè¾“å‡ºç»“æœã€‚
+		// action è¡¨ç¤ºæœ¬å›åˆçš„ç§»åŠ¨æ–¹å‘ï¼Œstay ä¸ºä¸ç§»åŠ¨
+		// tauntText è¡¨ç¤ºæƒ³è¦å«åš£çš„è¨€è¯­ï¼Œå¯ä»¥æ˜¯ä»»æ„å­—ç¬¦ä¸²ï¼Œé™¤äº†æ˜¾ç¤ºåœ¨å±å¹•ä¸Šä¸ä¼šæœ‰ä»»ä½•ä½œç”¨ï¼Œç•™ç©ºè¡¨ç¤ºä¸å«åš£
+		// data è¡¨ç¤ºè‡ªå·±æƒ³å­˜å‚¨ä¾›ä¸‹ä¸€å›åˆä½¿ç”¨çš„æ•°æ®ï¼Œç•™ç©ºè¡¨ç¤ºåˆ é™¤
+		// globalData è¡¨ç¤ºè‡ªå·±æƒ³å­˜å‚¨ä¾›ä»¥åä½¿ç”¨çš„æ•°æ®ï¼ˆæ›¿æ¢ï¼‰ï¼Œè¿™ä¸ªæ•°æ®å¯ä»¥è·¨å¯¹å±€ä½¿ç”¨ï¼Œä¼šä¸€ç›´ç»‘å®šåœ¨è¿™ä¸ª Bot ä¸Šï¼Œç•™ç©ºè¡¨ç¤ºåˆ é™¤
+		void WriteOutput(Direction action, string tauntText = "", string data = "", string globalData = "") const
+		{
+			Json::Value ret;
+			ret["response"]["action"] = action;
+			ret["response"]["tauntText"] = tauntText;
+			ret["data"] = data;
+			ret["globaldata"] = globalData;
+			ret["debug"] = (Json::Int)seed;
 
 #ifdef _BOTZONE_ONLINE
-            Json::FastWriter writer; // ÔÚÏßÆÀ²âµÄ»°ÄÜÓÃ¾ÍĞĞ¡­¡­
+			Json::FastWriter writer; // åœ¨çº¿è¯„æµ‹çš„è¯èƒ½ç”¨å°±è¡Œâ€¦â€¦
 #else
-            Json::StyledWriter writer; // ±¾µØµ÷ÊÔÕâÑùºÃ¿´ > <
+			Json::StyledWriter writer; // æœ¬åœ°è°ƒè¯•è¿™æ ·å¥½çœ‹ > <
 #endif
-            cout << writer.write(ret) << endl;
-        }
+			cout << writer.write(ret) << endl;
+		}
 
-        // ÓÃÓÚÏÔÊ¾µ±Ç°ÓÎÏ·×´Ì¬£¬µ÷ÊÔÓÃ¡£
-        // Ìá½»µ½Æ½Ì¨ºó»á±»ÓÅ»¯µô¡£
-        inline void DebugPrint() const
-        {
+		// ç”¨äºæ˜¾ç¤ºå½“å‰æ¸¸æˆçŠ¶æ€ï¼Œè°ƒè¯•ç”¨ã€‚
+		// æäº¤åˆ°å¹³å°åä¼šè¢«ä¼˜åŒ–æ‰ã€‚
+		inline void DebugPrint() const
+		{
 #ifndef _BOTZONE_ONLINE
-            printf("»ØºÏºÅ¡¾%d¡¿´æ»îÈËÊı¡¾%d¡¿| Í¼Àı ²úÉúÆ÷[G] ÓĞÍæ¼Ò[0/1/2/3] ¶à¸öÍæ¼Ò[*] ´ó¶¹[o] Ğ¡¶¹[.]\n", turnID, aliveCount);
-            for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
-            {
-                const Player &p = players[_];
-                printf("[Íæ¼Ò%d(%d, %d)|Á¦Á¿%d|¼Ó³ÉÊ£Óà»ØºÏ%d|%s]\n",
-                    _, p.row, p.col, p.strength, p.powerUpLeft, p.dead ? "ËÀÍö" : "´æ»î");
-            }
-            putchar(' ');
-            putchar(' ');
-            for (int c = 0; c < width; c++)
-                printf("  %d ", c);
-            putchar('\n');
-            for (int r = 0; r < height; r++)
-            {
-                putchar(' ');
-                putchar(' ');
-                for (int c = 0; c < width; c++)
-                {
-                    putchar(' ');
-                    printf((fieldStatic[r][c] & wallNorth) ? "---" : "   ");
-                }
-                printf("\n%d ", r);
-                for (int c = 0; c < width; c++)
-                {
-                    putchar((fieldStatic[r][c] & wallWest) ? '|' : ' ');
-                    putchar(' ');
-                    int hasPlayer = -1;
-                    for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
-                        if (fieldContent[r][c] & playerID2Mask[_])
-                            if (hasPlayer == -1)
-                                hasPlayer = _;
-                            else
-                                hasPlayer = 4;
-                    if (hasPlayer == 4)
-                        putchar('*');
-                    else if (hasPlayer != -1)
-                        putchar('0' + hasPlayer);
-                    else if (fieldStatic[r][c] & generator)
-                        putchar('G');
-                    else if (fieldContent[r][c] & playerMask)
-                        putchar('*');
-                    else if (fieldContent[r][c] & smallFruit)
-                        putchar('.');
-                    else if (fieldContent[r][c] & largeFruit)
-                        putchar('o');
-                    else
-                        putchar(' ');
-                    putchar(' ');
-                }
-                putchar((fieldStatic[r][width - 1] & wallEast) ? '|' : ' ');
-                putchar('\n');
-            }
-            putchar(' ');
-            putchar(' ');
-            for (int c = 0; c < width; c++)
-            {
-                putchar(' ');
-                printf((fieldStatic[height - 1][c] & wallSouth) ? "---" : "   ");
-            }
-            putchar('\n');
+			printf("å›åˆå·ã€%dã€‘å­˜æ´»äººæ•°ã€%dã€‘| å›¾ä¾‹ äº§ç”Ÿå™¨[G] æœ‰ç©å®¶[0/1/2/3] å¤šä¸ªç©å®¶[*] å¤§è±†[o] å°è±†[.]\n", turnID, aliveCount);
+			for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
+			{
+				const Player &p = players[_];
+				printf("[ç©å®¶%d(%d, %d)|åŠ›é‡%d|åŠ æˆå‰©ä½™å›åˆ%d|%s]\n",
+					_, p.row, p.col, p.strength, p.powerUpLeft, p.dead ? "æ­»äº¡" : "å­˜æ´»");
+			}
+			putchar(' ');
+			putchar(' ');
+			for (int c = 0; c < width; c++)
+				printf("  %d ", c);
+			putchar('\n');
+			for (int r = 0; r < height; r++)
+			{
+				putchar(' ');
+				putchar(' ');
+				for (int c = 0; c < width; c++)
+				{
+					putchar(' ');
+					printf((fieldStatic[r][c] & wallNorth) ? "---" : "   ");
+				}
+				printf("\n%d ", r);
+				for (int c = 0; c < width; c++)
+				{
+					putchar((fieldStatic[r][c] & wallWest) ? '|' : ' ');
+					putchar(' ');
+					int hasPlayer = -1;
+					for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
+						if (fieldContent[r][c] & playerID2Mask[_])
+							if (hasPlayer == -1)
+								hasPlayer = _;
+							else
+								hasPlayer = 4;
+					if (hasPlayer == 4)
+						putchar('*');
+					else if (hasPlayer != -1)
+						putchar('0' + hasPlayer);
+					else if (fieldStatic[r][c] & generator)
+						putchar('G');
+					else if (fieldContent[r][c] & playerMask)
+						putchar('*');
+					else if (fieldContent[r][c] & smallFruit)
+						putchar('.');
+					else if (fieldContent[r][c] & largeFruit)
+						putchar('o');
+					else
+						putchar(' ');
+					putchar(' ');
+				}
+				putchar((fieldStatic[r][width - 1] & wallEast) ? '|' : ' ');
+				putchar('\n');
+			}
+			putchar(' ');
+			putchar(' ');
+			for (int c = 0; c < width; c++)
+			{
+				putchar(' ');
+				printf((fieldStatic[height - 1][c] & wallSouth) ? "---" : "   ");
+			}
+			putchar('\n');
 #endif
-        }
+		}
 
-        Json::Value SerializeCurrentTurnChange()
-        {
-            Json::Value result;
-            TurnStateTransfer &bt = backtrack[turnID - 1];
-            for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
-            {
-                result["actions"][_] = bt.actions[_];
-                result["strengthDelta"][_] = bt.strengthDelta[_];
-                result["change"][_] = bt.change[_];
-            }
-            return result;
-        }
+		Json::Value SerializeCurrentTurnChange()
+		{
+			Json::Value result;
+			TurnStateTransfer &bt = backtrack[turnID - 1];
+			for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
+			{
+				result["actions"][_] = bt.actions[_];
+				result["strengthDelta"][_] = bt.strengthDelta[_];
+				result["change"][_] = bt.change[_];
+			}
+			return result;
+		}
 
-        // ³õÊ¼»¯ÓÎÏ·¹ÜÀíÆ÷
-        GameField()
-        {
-            if (constructed)
-                throw runtime_error("Çë²»ÒªÔÙ´´½¨ GameField ¶ÔÏóÁË£¬Õû¸ö³ÌĞòÖĞÖ»Ó¦¸ÃÓĞÒ»¸ö¶ÔÏó");
-            constructed = true;
+		// åˆå§‹åŒ–æ¸¸æˆç®¡ç†å™¨
+		GameField()
+		{
+			if (constructed)
+				throw runtime_error("è¯·ä¸è¦å†åˆ›å»º GameField å¯¹è±¡äº†ï¼Œæ•´ä¸ªç¨‹åºä¸­åªåº”è¯¥æœ‰ä¸€ä¸ªå¯¹è±¡");
+			constructed = true;
 
-            turnID = 0;
-        }
+			turnID = 0;
+		}
 
-        GameField(const GameField &b): GameField() {}
-    };
+		GameField(const GameField &b) : GameField() { }
+	};
 
-    bool GameField::constructed = false;
+	bool GameField::constructed = false;
 }
 
-// Ò»Ğ©¸¨Öú³ÌĞò
+// ä¸€äº›è¾…åŠ©ç¨‹åº
 namespace Helpers
 {
 
-    int actionScore[5] = {};
+	int actionScore[5] = {};
 
-    inline int RandBetween(int a, int b)
-    {
-        if (a > b)
-            swap(a, b);
-        return rand() % (b - a) + a;
-    }
+	inline int RandBetween(int a, int b)
+	{
+		if (a > b)
+			swap(a, b);
+		return rand() % (b - a) + a;
+	}
 
-    void RandomPlay(Pacman::GameField &gameField, int myID)
-    {
-        int count = 0, myAct = -1;
-        while (true)
-        {
-            // ¶ÔÃ¿¸öÍæ¼ÒÉú³ÉËæ»úµÄºÏ·¨¶¯×÷
-            for (int i = 0; i < MAX_PLAYER_COUNT; i++)
-            {
-                if (gameField.players[i].dead)
-                    continue;
-                Pacman::Direction valid[5];
-                int vCount = 0;
-                for (Pacman::Direction d = Pacman::stay; d < 4; ++d)
-                    if (gameField.ActionValid(i, d))
-                        valid[vCount++] = d;
-                gameField.actions[i] = valid[RandBetween(0, vCount)];
-            }
+	void RandomPlay(Pacman::GameField &gameField, int myID)
+	{
+		int count = 0, myAct = -1;
+		while (true)
+		{
+			// å¯¹æ¯ä¸ªç©å®¶ç”Ÿæˆéšæœºçš„åˆæ³•åŠ¨ä½œ
+			for (int i = 0; i < MAX_PLAYER_COUNT; i++)
+			{
+				if (gameField.players[i].dead)
+					continue;
+				Pacman::Direction valid[5];
+				int vCount = 0;
+				for (Pacman::Direction d = Pacman::stay; d < 4; ++d)
+					if (gameField.ActionValid(i, d))
+						valid[vCount++] = d;
+				gameField.actions[i] = valid[RandBetween(0, vCount)];
+			}
 
-            if (count == 0)
-                myAct = gameField.actions[myID];
+			if (count == 0)
+				myAct = gameField.actions[myID];
 
-            // ÑİËãÒ»²½¾ÖÃæ±ä»¯
-            // NextTurn·µ»Øtrue±íÊ¾ÓÎÏ·Ã»ÓĞ½áÊø
-            bool hasNext = gameField.NextTurn();
-            count++;
+			// æ¼”ç®—ä¸€æ­¥å±€é¢å˜åŒ–
+			// NextTurnè¿”å›trueè¡¨ç¤ºæ¸¸æˆæ²¡æœ‰ç»“æŸ
+			bool hasNext = gameField.NextTurn();
+			count++;
 
-            if (!hasNext)
-                break;
-        }
+			if (!hasNext)
+				break;
+		}
 
-        // ¼ÆËã·ÖÊı
-        int rank2player[] = {0, 1, 2, 3};
-        for (int j = 0; j < MAX_PLAYER_COUNT; j++)
-            for (int k = 0; k < MAX_PLAYER_COUNT - j - 1; k++)
-                if (gameField.players[rank2player[k]].strength > gameField.players[rank2player[k + 1]].strength)
-                    swap(rank2player[k], rank2player[k + 1]);
+		// è®¡ç®—åˆ†æ•°
+		int rank2player[] = { 0, 1, 2, 3 };
+		for (int j = 0; j < MAX_PLAYER_COUNT; j++)
+			for (int k = 0; k < MAX_PLAYER_COUNT - j - 1; k++)
+				if (gameField.players[rank2player[k]].strength > gameField.players[rank2player[k + 1]].strength)
+					swap(rank2player[k], rank2player[k + 1]);
 
-        int scorebase = 1;
-        if (rank2player[0] == myID)
-            actionScore[myAct + 1]++;
-        else
-            for (int j = 1; j < MAX_PLAYER_COUNT; j++)
-            {
-                if (gameField.players[rank2player[j - 1]].strength < gameField.players[rank2player[j]].strength)
-                    scorebase = j + 1;
-                if (rank2player[j] == myID)
-                {
-                    actionScore[myAct + 1] += scorebase;
-                    break;
-                }
-            }
+		int scorebase = 1;
+		if (rank2player[0] == myID)
+			actionScore[myAct + 1]++;
+		else
+			for (int j = 1; j < MAX_PLAYER_COUNT; j++)
+			{
+				if (gameField.players[rank2player[j - 1]].strength < gameField.players[rank2player[j]].strength)
+					scorebase = j + 1;
+				if (rank2player[j] == myID)
+				{
+					actionScore[myAct + 1] += scorebase;
+					break;
+				}
+			}
 
-        // »Ö¸´ÓÎÏ·×´Ì¬µ½×î³õ£¨¾ÍÊÇ±¾»ØºÏ£©
-        while (count-- > 0)
-            gameField.PopState();
-    }
+		// æ¢å¤æ¸¸æˆçŠ¶æ€åˆ°æœ€åˆï¼ˆå°±æ˜¯æœ¬å›åˆï¼‰
+		while (count-- > 0)
+			gameField.PopState();
+	}
 }
 
 int main()
 {
-    string dict[] = {"WhyAreYouSoGoodAtIt", "WhyWouldItBLikeThis", "ÄãÔõÃ´ÕâÃ´ÊìÁ·", "Äãµ½µ××ö¹ı¶àÉÙ´ÎÁË"};
-    Pacman::GameField gameField;
-    string data, globalData; // ÕâÊÇ»ØºÏÖ®¼ä¿ÉÒÔ´«µİµÄĞÅÏ¢
+	Pacman::GameField gameField;
+	string data, globalData; // è¿™æ˜¯å›åˆä¹‹é—´å¯ä»¥ä¼ é€’çš„ä¿¡æ¯
 
-                             // Èç¹ûÔÚ±¾µØµ÷ÊÔ£¬ÓĞinput.txtÔò»á¶ÁÈ¡ÎÄ¼şÄÚÈİ×÷ÎªÊäÈë
-                             // Èç¹ûÔÚÆ½Ì¨ÉÏ£¬Ôò²»»áÈ¥¼ì²éÓĞÎŞinput.txt
-    int myID = gameField.ReadInput("input.txt", data, globalData); // ÊäÈë£¬²¢»ñµÃ×Ô¼ºID
-    srand(Pacman::seed + myID);
+	// å¦‚æœåœ¨æœ¬åœ°è°ƒè¯•ï¼Œæœ‰input.txtåˆ™ä¼šè¯»å–æ–‡ä»¶å†…å®¹ä½œä¸ºè¾“å…¥
+	// å¦‚æœåœ¨å¹³å°ä¸Šï¼Œåˆ™ä¸ä¼šå»æ£€æŸ¥æœ‰æ— input.txt
+	int myID = gameField.ReadInput("input.txt", data, globalData); // è¾“å…¥ï¼Œå¹¶è·å¾—è‡ªå·±ID
+	srand(Pacman::seed + myID);
 
-    // ¼òµ¥Ëæ»ú£¬¿´ÄÄ¸ö¶¯×÷Ëæ»úÓ®µÃ×î¶à
-    for (int i = 0; i < 1000; i++)
-        Helpers::RandomPlay(gameField, myID);
+	// ç®€å•éšæœºï¼Œçœ‹å“ªä¸ªåŠ¨ä½œéšæœºèµ¢å¾—æœ€å¤š
+	for (int i = 0; i < 1000; i++)
+		Helpers::RandomPlay(gameField, myID);
 
-    int maxD = 0, d;
-    for (d = 0; d < 5; d++)
-        if (Helpers::actionScore[d] > Helpers::actionScore[maxD])
-            maxD = d;
+	int maxD = 0, d;
+	for (d = 0; d < 5; d++)
+		if (Helpers::actionScore[d] > Helpers::actionScore[maxD])
+			maxD = d;
 
-    // Êä³öµ±Ç°ÓÎÏ·¾ÖÃæ×´Ì¬ÒÔ¹©±¾µØµ÷ÊÔ¡£×¢ÒâÌá½»µ½Æ½Ì¨ÉÏ»á×Ô¶¯ÓÅ»¯µô£¬²»±Øµ£ĞÄ¡£
-    gameField.DebugPrint();
+	// è¾“å‡ºå½“å‰æ¸¸æˆå±€é¢çŠ¶æ€ä»¥ä¾›æœ¬åœ°è°ƒè¯•ã€‚æ³¨æ„æäº¤åˆ°å¹³å°ä¸Šä¼šè‡ªåŠ¨ä¼˜åŒ–æ‰ï¼Œä¸å¿…æ‹…å¿ƒã€‚
+	gameField.DebugPrint();
 
-    // Ëæ»ú¾ö¶¨ÊÇ·ñ½ĞÏù
-    if (rand() % 2)
-        gameField.WriteOutput((Pacman::Direction)(maxD - 1), "", data, globalData);
-    else
-        gameField.WriteOutput((Pacman::Direction)(maxD - 1), dict[Helpers::RandBetween(0, 4)], data, globalData);
-    return 0;
+	// éšæœºå†³å®šæ˜¯å¦å«åš£
+	if (rand() % 6)
+		gameField.WriteOutput((Pacman::Direction)(maxD - 1), "", data, globalData);
+	else
+		gameField.WriteOutput((Pacman::Direction)(maxD - 1), "Hello, cruel world", data, globalData);
+	return 0;
 }
