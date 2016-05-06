@@ -1059,18 +1059,18 @@ namespace QhHelper
             throw runtime_error("输入坐标不合法");
         const Pacman::Player & zero = gamefield.players[0], one = gamefield.players[1],
             two = gamefield.players[2], three = gamefield.players[3];
-        const double smallvalue = 3;
+        const double smallvalue = 6.18;
         double largevalue = 0;//why 不用const ?因为后面要赋值（不够熟练）
         if (mypowerUpLeft > 3)
             largevalue = 0.12*(gamefield.LARGE_FRUIT_DURATION - mypowerUpLeft);
         else
             largevalue = 10;
         if (gamefield.turnID > 70)
-            largevalue = 20;
+            largevalue = (gamefield.turnID-70) * 1.1618;
         //const int generatvalue = 5;
         const double threat = -15;
         const double position = -5;
-        int value = 0; int myByte = pow(2, myID);
+        double value = 0; int myByte = pow(2, myID);
         if (gamefield.fieldContent[r][c] & Pacman::smallFruit) value += smallvalue;
         if (gamefield.fieldContent[r][c] & Pacman::largeFruit) value += largevalue;
         //if (gamefield.fieldContent[r][c] & Pacman::generator) value += generatvalue;
@@ -1082,6 +1082,8 @@ namespace QhHelper
             {
                 if (FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(zero.row, zero.col), gamefield) < 6)
                     value -= stopnumber;
+                if (FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(zero.row, zero.col), gamefield) < 3)
+                    value -= stopnumber * 2;
                 else
                     value += threat;
             }
@@ -1094,7 +1096,7 @@ namespace QhHelper
                 if (FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(one.row, one.col), gamefield) < 6)
                     value -= stopnumber;
                 if (FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(one.row, one.col), gamefield) < 3)
-                    value -= stopnumber;
+                    value -= stopnumber * 0.618;
                 else
                     value += threat;
             }
@@ -1107,7 +1109,7 @@ namespace QhHelper
                 if (FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(two.row, two.col), gamefield) < 6)
                     value -= stopnumber;
                 if (FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(two.row, two.col), gamefield) < 3)
-                    value -= stopnumber;
+                    value -= stopnumber * 0.618;
                 else
                     value += threat;
             }
@@ -1120,7 +1122,7 @@ namespace QhHelper
                 if (FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(three.row, three.col), gamefield) < 6)
                     value -= stopnumber;
                 if (FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(three.row, three.col), gamefield) < 3)
-                    value -= stopnumber;
+                    value -= stopnumber * 0.618;
                 else
                     value += threat;
             }
@@ -1239,7 +1241,7 @@ namespace QhHelper
     //抓取最近的一个fruit smallfruit和largefruit分开计算
     GetFruit GetFruitPath(Pacman::Direction d, const Pacman::GameField& gamefield, int myID, Pacman::GridContentType fruit)
     {
-        int MaxDepth = 6;
+        int MaxDepth = 7;
         bool decide[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
         memset(decide, false, sizeof(decide));
         int r = (myrow + h + Pacman::dy[d]) % h;
@@ -1472,7 +1474,7 @@ int main()
     Pacman::Direction ans = QhHelper::AIOutput(gameField, myID);
 
     // 随机决定是否叫嚣
-    if (ans != Pacman::stay)
+    if (gameField.turnID % 8)
     {
         // 简单随机，看哪个动作随机赢得最多
         for (int i = 0; i < 10000; i++)
