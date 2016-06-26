@@ -1,6 +1,5 @@
 /*
 *  作者：叶志晟
-*  最后修改时间：2016年5月6日21:14:50
 * 【命名惯例】
 *  r/R/y/Y：Row，行，纵坐标
 *  c/C/x/X：Column，列，横坐标
@@ -38,12 +37,11 @@
 #include <string>
 #include <cstring>
 #include <stack>
-#include <queue>
-#include <exception>
 #include <stdexcept>
 #include "jsoncpp/json.h"
 #include <stack>
 #include <queue>
+#include<sstream>
 
 #define DEPTH 5
 #define ShortestDangerDistance 5
@@ -63,6 +61,7 @@ using std::getline;
 using std::runtime_error;
 using std::queue;
 using std::stack;
+using std::stringstream;
 
 // 平台提供的吃豆人相关逻辑处理程序
 namespace Pacman
@@ -119,11 +118,6 @@ namespace Pacman
     inline T operator ~(const T &a)
     {
         return static_cast<T>(~static_cast<int>(a));
-    }
-    template<typename T>
-    inline T operator ^(const T &a, const T &b)
-    {
-        return static_cast<T>(static_cast<int>(a) ^ static_cast<int>(b));
     }
 
     // 每个格子固定的东西，会采用“或”逻辑进行组合
@@ -881,7 +875,7 @@ namespace Helpers
             }
             num = nextnum; nextnum = 0;
         }
-        return 99999;
+        return 999999;
     }
 
     int FindSmallestIndex(int *a, int n)
@@ -951,6 +945,13 @@ namespace Helpers
 
 namespace QhHelper
 {
+    string data, globalData; // 这是回合之间可以传递的信息
+    stringstream ss;
+    Pacman::Direction avoid = Pacman::stay;
+    string tmpGlobalData;
+    bool OffRoadPosition[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH] = {0};
+
+    int forwardsteps[6][2];
     const double stopnumber = 999999;//赋值的无穷，使路被封堵
     int h;//gamefield.height
     int w;//gamefiled.width
@@ -969,8 +970,32 @@ namespace QhHelper
     //code 中 value 类型一律采用double
     //r,c为bfs开始坐标，value是估值变量的引用，用于传递给op，op则是对应的具体的操作函数
     //op返回的是bool值 返回false代表bfs结束，返回true代表bfs进行
+    //r,c为bfs开始坐标，value是估值变量的引用，用于传递给op，op则是对应的具体的操作函数
+    //op返回的是bool值 返回false代表bfs结束，返回true代表bfs进行
     bool IfEmpty;     //用于判断搜索范围之内是否毫无fruit 搜索value=0且所有点为零
                       //false 代表 不空 true代表 空
+
+    void FieldSetFlag(const Pacman::GameField &gamefield)
+    {
+        for (int i = 0; i < h;i ++)
+            for (int j = 0; j < w; j++)
+            {
+                if(OffRoadPosition[i][j])
+                    continue;
+                int cnt[4] = {0};
+                Pacman::Direction dir;
+                if (gamefield.fieldContent[i][j] & Pacman::wallEast)
+                    cnt[1]++;
+                if (gamefield.fieldContent[i][j] & Pacman::wallWest)
+                    cnt[3]++;
+                if (gamefield.fieldContent[i][j] & Pacman::wallNorth)
+                    cnt[0]++;
+                if (gamefield.fieldContent[i][j] & Pacman::wallSouth)
+                    cnt[2]++;
+                if (cnt[0] + cnt[1] + cnt[2] + cnt[3] == 3)
+                    OffRoadPosition[i][j] = true;
+            }
+    }
     template<class func>
     void BfsSearch(const Pacman::GameField &gamefield, int r, int c, double &value, func op, int myID)
     {
@@ -1019,6 +1044,7 @@ namespace QhHelper
         }
         return;
     }
+
     bool operator ==(const Pacman::FieldProp & a, const Pacman::FieldProp & b)
     {
         return a.col == b.col&&a.row == b.row ? true : false;
@@ -1029,9 +1055,7 @@ namespace QhHelper
                    //最短路径bfsop
     bool FindShortestPathBfsop(const Pacman::GameField & gamefield, int r, int c, double & value, int path, int myID)
     {
-        if (r >= h || r < 0 || c >= w || c < 0)
-            throw runtime_error("输入坐标不合法");
-        if (r == Terr&&c == Terc)
+        if (r == Terr && c == Terc)
         {
             value = path; return false;
         }
@@ -1039,152 +1063,76 @@ namespace QhHelper
     }
     int FindShortestPathBfs(const Pacman::FieldProp & Begin, const Pacman::FieldProp & End, const Pacman::GameField & gamefield)
     {
-        if (Begin.row >= h || Begin.row < 0 || Begin.col >= w || Begin.col < 0 ||
-            End.row >= h || End.row < 0 || End.col >= w || End.col < 0)
-            throw runtime_error("输入坐标不合法");
         Terr = End.row; Terc = End.col;//初始化
         double value = stopnumber;//开始赋值为不通
-        BfsSearch(gamefield, Begin.row, Begin.col, value, FindShortestPathBfsop, -1);//myID赋值-1无作用
-                                                                                     /*cout << "最短路径 " << Begin.row << ' ' << Begin.col << "    " << End.row << ' ' << End.col << endl
-                                                                                     << value << endl;//调试用*/
+        BfsSearch(gamefield, Begin.row, Begin.col, value, FindShortestPathBfsop, -1);//myID赋值-1无作用																			 
         return value;
     }
 
-    //以下是自己瞎几把写的
 
-    //攫取价值
-    double ValueTake(const Pacman::GameField & gamefield, int r, int c, int myID)
+    //判断是否存在死路且无fruit
+    void EnemyOffroad(const Pacman::GameField& gamefield, int myID, bool decide[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH])
     {
-        if (r >= h || r < 0 || c >= w || c < 0)
-            throw runtime_error("输入坐标不合法");
-        const Pacman::Player & zero = gamefield.players[0], one = gamefield.players[1],
-            two = gamefield.players[2], three = gamefield.players[3];
-        const double smallvalue = 6.18;
-        double largevalue = 0;//why 不用const ?因为后面要赋值（不够熟练）
-        if (mypowerUpLeft > 3)
-            largevalue = 0.12*(gamefield.LARGE_FRUIT_DURATION - mypowerUpLeft);
-        else
-            largevalue = 10;
-        if (gamefield.turnID > 70)
-            largevalue = (gamefield.turnID-70) * 1.1618;
-        //const int generatvalue = 5;
-        const double threat = -15;
-        const double position = -5;
-        double value = 0; int myByte = pow(2, myID);
-        if (gamefield.fieldContent[r][c] & Pacman::smallFruit) value += smallvalue;
-        if (gamefield.fieldContent[r][c] & Pacman::largeFruit) value += largevalue;
-        //if (gamefield.fieldContent[r][c] & Pacman::generator) value += generatvalue;
-        // 如果 比你威力强的敌人 在两步及之内 说啥 快跑！
-        //player.dead false玩家存活
-        if ((gamefield.fieldContent[r][c] & Pacman::player1) && Pacman::player1 != myByte && !gamefield.players[0].dead)
-        {
-            if (gamefield.players[0].strength > mystrength)
-            {
-                if (FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(zero.row, zero.col), gamefield) < 6)
-                    value -= stopnumber;
-                if (FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(zero.row, zero.col), gamefield) < 3)
-                    value -= stopnumber * 2;
-                else
-                    value += threat;
-            }
-            else value += position;
-        }
-        if ((gamefield.fieldContent[r][c] & Pacman::player2) && Pacman::player2 != myByte && !gamefield.players[1].dead)
-        {
-            if (gamefield.players[1].strength > mystrength)
-            {
-                if (FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(one.row, one.col), gamefield) < 6)
-                    value -= stopnumber;
-                if (FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(one.row, one.col), gamefield) < 3)
-                    value -= stopnumber * 0.618;
-                else
-                    value += threat;
-            }
-            else value += position;
-        }
-        if ((gamefield.fieldContent[r][c] & Pacman::player3) && Pacman::player3 != myByte && !gamefield.players[2].dead)
-        {
-            if (gamefield.players[2].strength > mystrength)
-            {
-                if (FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(two.row, two.col), gamefield) < 6)
-                    value -= stopnumber;
-                if (FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(two.row, two.col), gamefield) < 3)
-                    value -= stopnumber * 0.618;
-                else
-                    value += threat;
-            }
-            else value += position;
-        }
-        if ((gamefield.fieldContent[r][c] & Pacman::player4) && Pacman::player4 != myByte && !gamefield.players[3].dead)
-        {
-            if (gamefield.players[3].strength > mystrength)
-            {
-                if (FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(three.row, three.col), gamefield) < 6)
-                    value -= stopnumber;
-                if (FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(three.row, three.col), gamefield) < 3)
-                    value -= stopnumber * 0.618;
-                else
-                    value += threat;
-            }
-            else value += position;
-        }
-        return value;
+        for (int i = 0; i<4; ++i)
+            if (i != myID)
+                if (!gamefield.players[i].dead&&gamefield.players[i].strength > mystrength)
+                {
+                    int tempr = gamefield.players[i].row, tempc = gamefield.players[i].col;
+                    decide[tempr][tempc] = true;
+                    if (!(gamefield.fieldStatic[tempr][tempc] & Pacman::wallNorth))
+                        decide[(tempr + h - 1) % h][tempc] = true;
+                    if (!(gamefield.fieldStatic[tempr][tempc] & Pacman::wallSouth))
+                        decide[(tempr + 1) % h][tempc] = true;
+                    if (!(gamefield.fieldStatic[tempr][tempc] & Pacman::wallEast))
+                        decide[tempr][(tempc + 1) % w] = true;
+                    if (!(gamefield.fieldStatic[tempr][tempc] & Pacman::wallWest))
+                        decide[tempr][(tempc - 1 + w) % w] = true;
+                }
     }
-    //BfsSearch_的op函数
-    inline bool BfsValueop(const Pacman::GameField &gamefield, int r, int c, double &value, int path, int myID)
+    //
+    struct Eaten
     {
-        if (r >= h || r < 0 || c >= w || c < 0)
-            throw runtime_error("输入坐标不合法");
-        const int Maxstep = 20;
-        if (path > Maxstep) return false;
-        if (r == myrow && c == mycol) return true;
-        double pointvalue = ValueTake(gamefield, r, c, myID);
-        if (pointvalue != 0) IfEmpty = false;
-        value += pointvalue*(Maxstep - path);
-        return true;
-    }
-    double BfsValue(Pacman::FieldProp Begin, const Pacman::GameField & gamefield, int myID)
-    {
-        if (Begin.row >= h || Begin.row < 0 || Begin.col >= w || Begin.col < 0)
-            throw runtime_error("输入坐标不合法");
-        IfEmpty = true;//reset variable 
-        double value = 0;//函数返回的价值,等于估值乘以距离 
-        BfsSearch(gamefield, Begin.row, Begin.col, value, BfsValueop, myID);
-        return value;
-    }
-    //BFS探索有限步
-    //局部贪心 走最近的果子
-    inline bool FirstTakenop(const Pacman::GameField & gamefield, int r, int c, double & value, int path, int myID)
-    {
-        if (r >= h || r < 0 || c >= w || c < 0)
-            throw runtime_error("输入坐标不合法");
-        int Maxstep = 20;
-        if (path > Maxstep)
+        int zero, one, two, three;
+        int fsmall, flarge;
+        int path;
+        Eaten()
         {
-            value = 0; return false;
+            zero = one = two = three = 0;
+            fsmall = flarge = 0;
+            path = 0;
         }
-        if (gamefield.fieldContent[r][c] & (Pacman::smallFruit | Pacman::largeFruit))
+        void setfalse()
         {
-            value = Maxstep - path; return false;
+            zero = one = two = three = 0;
+            fsmall = flarge = 0;
+            path = 0;
         }
-        else return true;
-    }
-    //返回离该点最近不属的果子
-    int FirstTakenBfs(Pacman::FieldProp Begin, const Pacman::GameField & gamefield, int myID)
+        operator bool()
+        {
+            if (zero || one || two || three) return true;
+            else return false;
+        }
+        int sum()
+        {
+            return zero + one + two + three;
+        }
+        int choose()
+        {
+            if (zero) return 0;
+            if (one) return 1;
+            if (two) return 2;
+            if (three) return 3;
+            return -1;
+        }
+    };
+    Eaten eatenenemy;//记录准备吃的敌人的最远可能路程
+                     /*
+                     fruitthink 1 考虑fruit遇到fruit返回true 0 同时记录吃人的一些信息
+                     */
+    bool OffRoad(const Pacman::GameField& gamefield, Pacman::Direction d, int myID, int fruitthink, int Depth = 6)//x前进方向,Depth 为搜索深度
     {
-        if (Begin.row >= h || Begin.row < 0 || Begin.col >= w || Begin.col < 0)
-            throw runtime_error("输入坐标不合法");
-        double value = 0;
-        BfsSearch(gamefield, Begin.row, Begin.col, value, FirstTakenop, myID);
-        return value;
-    }
-    //判断是否存在死路 true代表搜索后的路不值得走  false代表搜索后的路值得走
-    //fruitthink true 代表搜索时遇到果子就返回true false 则不考虑fruit影响
-    bool OffRoad(const Pacman::GameField& gamefield, Pacman::Direction d, bool fruitthink = true, int Depth = 6)//x前进方向,Depth 为搜索深度
-    {
+        const int searchpath = 6;
         int r = (myrow + h + Pacman::dy[d]) % h, c = (mycol + w + Pacman::dx[d]) % w;
-        if (r >= h || r < 0 || c >= w || c < 0)
-            throw runtime_error("输入坐标不合法");
         bool decide[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
         memset(decide, false, sizeof(decide));
         queue<Pacman::FieldProp > a;
@@ -1192,14 +1140,35 @@ namespace QhHelper
         decide[myrow][mycol] = true;
         decide[r][c] = true;
         int num = 1, nextnum = 0;
+        if (!fruitthink)//判断会不会被逼近死路时将比自己力量强的敌人周围设成路障
+            EnemyOffroad(gamefield, myID, decide);
         while (Depth > 0)
         {
             --Depth;
             for (int i = 0; i < num; ++i)
             {
                 Pacman::FieldProp& temp = a.front();
-                if (fruitthink && gamefield.fieldContent[temp.row][temp.col] & (Pacman::smallFruit | Pacman::largeFruit))
+                if (fruitthink == 1 && gamefield.fieldContent[temp.row][temp.col] & (Pacman::smallFruit | Pacman::largeFruit))
                     return false;
+                if (fruitthink == 0)
+                {
+                    if (gamefield.fieldContent[temp.row][temp.col] & Pacman::smallFruit)
+                        eatenenemy.fsmall += 1;
+                    if (gamefield.fieldContent[temp.row][temp.col] & Pacman::largeFruit)
+                        eatenenemy.flarge += 1;
+                    if (myID != 0 && gamefield.fieldContent[temp.row][temp.col] & Pacman::player1)
+                        if (gamefield.players[0].strength < mystrength)
+                            eatenenemy.zero = 1;
+                    if (myID != 1 && gamefield.fieldContent[temp.row][temp.col] & Pacman::player2)
+                        if (gamefield.players[1].strength < mystrength)
+                            eatenenemy.one = 1;
+                    if (myID != 2 && gamefield.fieldContent[temp.row][temp.col] & Pacman::player3)
+                        if (gamefield.players[2].strength < mystrength)
+                            eatenenemy.two = 1;
+                    if (myID != 3 && gamefield.fieldContent[temp.row][temp.col] & Pacman::player4)
+                        if (gamefield.players[3].strength < mystrength)
+                            eatenenemy.three = 1;
+                }
                 if (!(gamefield.fieldStatic[temp.row][temp.col] & Pacman::wallNorth) && !decide[(temp.row + h - 1) % h][temp.col])
                 {
                     ++nextnum; a.push(Pacman::FieldProp((temp.row + h - 1) % h, temp.col));
@@ -1223,14 +1192,37 @@ namespace QhHelper
                 a.pop();
             }
             num = nextnum; nextnum = 0;
-            if (num == 0) return true;
+            if (num == 0)
+            {
+                eatenenemy.path = searchpath - Depth;
+                return true;
+            }
         }
+        eatenenemy.setfalse();
         return false;
     }
     //判断自己是否有可能被敌人追进死路吃掉
     //是的话打死也不能朝这个方向走呗
     //如果是返回true else false
-
+    //走进死路吃人的函数
+    int OffRoadEat(const Pacman::GameField& gamefield)
+    {
+        if (eatenenemy.sum() > 2 || eatenenemy.sum() == 0)
+            return -1;
+        int eaten = eatenenemy.choose();
+        if (eaten >= 0)
+        {
+            int tempUP = 0;
+            tempUP += eatenenemy.fsmall;
+            if (eatenenemy.flarge)
+                tempUP += 10;
+            if (gamefield.players[eaten].strength + tempUP >= mystrength)
+                return -1;
+            else
+                return eaten;
+        }
+        return -1;
+    }
     //搜索一定步数内是否有危险敌人存在
     struct GetFruit:Pacman::FieldProp
     {
@@ -1241,7 +1233,7 @@ namespace QhHelper
     //抓取最近的一个fruit smallfruit和largefruit分开计算
     GetFruit GetFruitPath(Pacman::Direction d, const Pacman::GameField& gamefield, int myID, Pacman::GridContentType fruit)
     {
-        int MaxDepth = 7;
+        int MaxDepth = 6;
         bool decide[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
         memset(decide, false, sizeof(decide));
         int r = (myrow + h + Pacman::dy[d]) % h;
@@ -1296,7 +1288,7 @@ namespace QhHelper
     {
         if (k == myID) return false;
         if (target.fruit == Pacman::empty) return false;
-        int enemybyte = 1 << k;
+        int enemybyte = pow(2, k);
         int benstr = 0;
         if (target.fruit == Pacman::smallFruit) benstr = 1;
         else benstr = 10;
@@ -1305,12 +1297,12 @@ namespace QhHelper
             if (FindShortestPathBfs(Pacman::FieldProp(r, c), Pacman::FieldProp(target.row, target.col), gamefield)
                 < FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(target.row, target.col), gamefield))
             {
-                if (gamefield.players[k].strength + benstr + 2 >  mystrength) return true;
+                if (gamefield.players[k].strength + benstr  > mystrength) return true;
                 else return false;
             }
             else
             {
-                if (mystrength + benstr < 2 * target.path - 1 + gamefield.players[k].strength) return true;
+                if (mystrength + benstr <  gamefield.players[k].strength) return true;
                 else return false;
             }
         }
@@ -1318,7 +1310,7 @@ namespace QhHelper
     }
     //返回搜索到的敌人编号 
     //-1就是没找到
-    int SearchEnemy(const Pacman::GameField& gamefield, int myID, GetFruit & target)//r是logical 半径
+    int SearchEnemy(const Pacman::GameField& gamefield, int myID, GetFruit & target)
     {
         bool decide[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
         memset(decide, false, sizeof(decide));
@@ -1371,6 +1363,7 @@ namespace QhHelper
             if (num == 0) return -1;
         }
     }
+
     //返回true 有威胁 返回false 无威胁
     bool LifeSaveEnemy(Pacman::Direction d, const Pacman::GameField& gamefield, int myID)
     {
@@ -1381,6 +1374,7 @@ namespace QhHelper
         if (person1 == -1 && person2 == -1) return false;
         else return true;
     }
+
     //1.判断是否进入无用的死胡同
     //2.判断是否进入死胡同后会被艹
     //3.返回true代表可以走 ，返回false代表不能走
@@ -1388,64 +1382,336 @@ namespace QhHelper
     {
         int r = (myrow + h + Pacman::dy[d]) % h;
         int c = (mycol + w + Pacman::dx[d]) % w;
-        if (OffRoad(gamefield, d)) return false;
-        else if (OffRoad(gamefield, d, false))
-            return !LifeSaveEnemy(d, gamefield, myID);//函数返回是否有威胁
+        bool del1 = OffRoad(gamefield, d, myID, 1);//false 有豆子或者通 true 无豆子且不通
+        bool del2 = OffRoad(gamefield, d, myID, 0);//true 不通 false 通 顺带对eatenenemy进行赋值
+        bool del3 = LifeSaveEnemy(d, gamefield, myID);//true有威胁 false无威胁
+        if (del2)
+        {
+            if (del3) return false;
+            if (!del1) return true;
+            if (eatenenemy) return true;
+            return false;
+        }
         else return true;
     }
+
+    //攫取价值
+    void FruitofEnemy(const Pacman::GameField & gamefield, const double & k1, const double &k2, const double &k3, int * dis, double & value, int myID, int enemyID)
+    {
+        const int Maxstep = 20;
+        if (myID == enemyID) return;
+        if (!gamefield.players[enemyID].dead)
+        {
+            if (dis[myID]<dis[enemyID] && gamefield.players[enemyID].strength>mystrength)
+                value += k3 / (dis[enemyID] + 1);
+            if (dis[myID] >= dis[enemyID])
+            {
+                if (gamefield.players[enemyID].strength > mystrength)
+                    value += k2 / (dis[enemyID] + 1);
+                else value += k1 / (dis[enemyID] + 1);
+            }
+        }
+    }
+    double ValueTake2(const Pacman::GameField & gamefield, int r, int c, int myID, int path)
+    {
+        double value = 0;
+        const double neargenerator = 1;
+        const int maxpath = 20;
+        const double disaffect = 0.05;
+        if (gamefield.fieldStatic[(r + h - 1) % h][c] & Pacman::generator)
+            value += neargenerator + disaffect*(maxpath - path);
+        if (gamefield.fieldStatic[(r + 1) % h][c] & Pacman::generator)
+            value += neargenerator + disaffect*(maxpath - path);
+        if (gamefield.fieldStatic[r][(c + w - 1) % w] & Pacman::generator)
+            value += neargenerator + disaffect*(maxpath - path);
+        if (gamefield.fieldStatic[r][(c + 1) % w] & Pacman::generator)
+            value += neargenerator + disaffect*(maxpath - path);
+        return value;
+    }
+    double ValueTake(const Pacman::GameField & gamefield, int r, int c, int myID, int path)
+    {
+        const int Maxstep = 20;
+        const Pacman::Player & zero = gamefield.players[0], one = gamefield.players[1],
+            two = gamefield.players[2], three = gamefield.players[3];
+        const double smallvalue = 10;
+        double largevalue = 0;//why 不用const ?因为后面要赋值
+        if (mypowerUpLeft > 3)
+            largevalue = 10;
+        //largevalue = 0.12*(gamefield.LARGE_FRUIT_DURATION - mypowerUpLeft);
+        else
+            largevalue = 100;
+        //const int generatvalue = 5;
+        const double threat = -40;
+        //const double position = -5;
+        const double sFruitofsEnemy = 0;//敌人距离近时弱敌人位置对果子估值影响参数
+        const double sFruitoflEnemy = 0;//敌人距离近时强敌人位置对果子估值影响参数
+        const double lFruitoflEnemy = 0;//敌人距离远时强敌人位置对果子估值函数影响
+        double value = 0; int myByte = pow(2, myID);
+        int dis[4];
+        /*dis[0] = FindShortestPathBfs(Pacman::FieldProp(r, c), Pacman::FieldProp(zero.row, zero.col), gamefield);
+        dis[1] = FindShortestPathBfs(Pacman::FieldProp(r, c), Pacman::FieldProp(one.row, one.col), gamefield);
+        dis[2] = FindShortestPathBfs(Pacman::FieldProp(r, c), Pacman::FieldProp(two.row, two.col), gamefield);
+        dis[3] = FindShortestPathBfs(Pacman::FieldProp(r, c), Pacman::FieldProp(three.row, three.col), gamefield);*/
+        if (gamefield.fieldContent[r][c] & Pacman::smallFruit)
+        {
+            value += smallvalue;
+            /*for (int i = 0; i < 4; ++i)
+            FruitofEnemy(gamefield, sFruitofsEnemy, sFruitoflEnemy, lFruitoflEnemy, dis, value, myID, i);*/
+        }
+        if (gamefield.fieldContent[r][c] & Pacman::largeFruit)
+        {
+            value += largevalue;
+            //for (int i = 0; i < 4; ++i)
+            //FruitofEnemy(gamefield, sFruitofsEnemy, sFruitoflEnemy, lFruitoflEnemy, dis, value, myID, i);
+        }
+        //if (gamefield.fieldContent[r][c] & Pacman::generator) value += generatvalue;
+        // 如果 比你威力强的敌人 在两步及之内 说啥 快跑！
+        //player.dead false玩家存活
+        //const double sEnemy = 0.5;
+        //if (path > 0) return value;
+        if ((gamefield.fieldContent[r][c] & Pacman::player1) && Pacman::player1 != myByte && !zero.dead)
+            if (zero.strength > mystrength)
+            {
+                int dis = FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(zero.row, zero.col), gamefield);
+                if (dis < 3)
+                    value -= stopnumber;
+                else
+                    value += threat;
+            }
+
+        if ((gamefield.fieldContent[r][c] & Pacman::player2) && Pacman::player2 != myByte && !one.dead)
+            if (one.strength > mystrength)
+            {
+                int dis = FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(one.row, one.col), gamefield);
+                if (dis < 3)
+                    value -= stopnumber;
+                else
+                    value += threat;
+            }
+
+        if ((gamefield.fieldContent[r][c] & Pacman::player3) && Pacman::player3 != myByte && !two.dead)
+            if (two.strength > mystrength)
+            {
+                int dis = FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(two.row, two.col), gamefield);
+                if (dis < 3)
+                    value -= stopnumber;
+                else
+                    value += threat;
+            }
+
+        if ((gamefield.fieldContent[r][c] & Pacman::player4) && Pacman::player4 != myByte && !three.dead)
+            if (three.strength > mystrength)
+            {
+                int dis = FindShortestPathBfs(Pacman::FieldProp(myrow, mycol), Pacman::FieldProp(three.row, three.col), gamefield);
+                if (dis < 3)
+                    value -= stopnumber;
+                else
+                    value += threat;
+            }
+
+        return value;
+    }
+    //BfsSearch_的op函数
+    inline bool BfsValueop(const Pacman::GameField &gamefield, int r, int c, double &value, int path, int myID)
+    {
+        const int Maxstep = 20;
+        if (path > Maxstep) return false;
+        //if (r == myrow && c == mycol) return true;
+        double pointvalue = ValueTake(gamefield, r, c, myID, path);//返回该点对出发点的估值
+        double pointvalue2 = ValueTake2(gamefield, r, c, myID, path);//对generator附近位置的估值
+        value += pointvalue*(Maxstep - path);
+        value += pointvalue2;
+        if (pointvalue != 0 || pointvalue2 != 0) IfEmpty = false;
+        return true;
+    }
+    double BfsValue(Pacman::FieldProp Begin, const Pacman::GameField & gamefield, int myID)
+    {
+        IfEmpty = true;//reset variable  IfEmpty
+        double value = 0;//函数返回的价值,等于估值乘以距离 
+        BfsSearch(gamefield, Begin.row, Begin.col, value, BfsValueop, myID);
+        return value;
+    }
+    //BFS探索有限步
+    //局部贪心 走最近的果子
+
+    inline bool FirstTakenop(const Pacman::GameField & gamefield, int r, int c, double& value, int path, int myID)
+    {
+        int Maxstep = 20;
+        if (path > Maxstep)
+        {
+            value = 0; return false;
+        }
+        if (gamefield.fieldContent[r][c] & (Pacman::smallFruit | Pacman::largeFruit))
+        {
+            value = Maxstep - path; return false;
+        }
+        else return true;
+    }
+    //返回离该点最近不属的果子
+    int FirstTakenBfs(Pacman::FieldProp Begin, const Pacman::GameField & gamefield, int myID)
+    {
+        double value = 0;
+        BfsSearch(gamefield, Begin.row, Begin.col, value, FirstTakenop, myID);
+        return value;
+    }
+
+    //判断威胁是否近在眼前
+    //是的话打死也不能朝这个方向走呗
+    //如果是返回true else false
     //控制总的输入输出
+    Pacman::Direction Direct(int turnID)
+    {
+        int frow = forwardsteps[(turnID - 1) % 6][0], fcol = forwardsteps[(turnID - 1) % 6][1];
+        if (frow == (myrow + h - 1) % h) return Pacman::up;
+        if (frow == (myrow + 1) % h) return Pacman::down;
+        if (fcol == (mycol + 1) % w) return Pacman::right;
+        if (fcol == (mycol + w - 1) % w) return Pacman::left;
+    }
+    void Globalread(int turnID)
+    {
+        memset(forwardsteps, 0, sizeof(forwardsteps));
+        if (turnID > 1)
+        {
+            char temp;
+            ss << globalData;
+            for (int i = 0; i < 6; ++i)
+                ss >> forwardsteps[i][0] >> temp >> forwardsteps[i][1] >> temp;
+        }
+        forwardsteps[(turnID - 6) % 6][0] = myrow;
+        forwardsteps[(turnID - 6) % 6][1] = mycol;
+        for (int i = 0; i<6; ++i)
+            ss << forwardsteps[i][0] << ',' << forwardsteps[i][1] << ',';
+        ss >> globalData;
+        if (turnID < 6) return;
+        int i;
+        for (i = 0; i < 4; ++i)
+            if (forwardsteps[i][0] != forwardsteps[i + 2][0] || forwardsteps[i][1] != forwardsteps[i + 2][1])
+                break;
+        if (i == 4)
+            avoid = Direct(turnID);
+    }
+    void Y_Globalread(int turnID)
+    {
+        if (turnID == 1)
+        {
+            memset(forwardsteps, 0, sizeof(forwardsteps));
+            globalData = "\0";
+            tmpGlobalData = "\0";
+        }
+        else
+        {
+            char tmp;
+            tmpGlobalData = globalData;
+            while (tmpGlobalData.find(',') != string::npos)
+            {
+                int pos = tmpGlobalData.find(',');
+                tmpGlobalData[pos] = ' ';
+            }
+            ss << tmpGlobalData;
+            for (int i = 0; i < 6; i++)
+                ss >> forwardsteps[i][0] >> forwardsteps[i][1];
+        }
+        forwardsteps[turnID][0] = myrow;
+        forwardsteps[turnID][1] = mycol;
+        for (int i = 0; i < 6; i++)
+            ss << forwardsteps[i][0] << ',' << forwardsteps[i][1] << ',';
+        ss >> tmpGlobalData;
+        globalData = tmpGlobalData;
+    }
     Pacman::Direction AIOutput(const Pacman::GameField &gamefield, int myID)
     {
         Qhset(gamefield, myID);
-        const int bfs = 1;
-        const int firstfruit = 30;//last 33
-        int value = -100 * stopnumber; //value初始值要保证在有威胁敌人迫近时，value能使函数取到相对比较大的值
-                                       //value的abs不能太大
+        //Globalread(gamefield.turnID);
+        const double mineat = 8;
+        const double bfs = 1;
+        const double firstfruit = 500;
+        double eatvalue = 0;
+        double value = -100 * stopnumber;
         Pacman::Direction target = Pacman::stay;
         if (!(gamefield.fieldStatic[myrow][mycol] & Pacman::wallNorth))
             if (LifeSave(Pacman::up, gamefield, myID))//判断不是死路且没有生命危险
             {
-                int k1 = BfsValue(Pacman::FieldProp((myrow + h - 1) % h, mycol), gamefield, myID)*bfs;
-                int k2 = FirstTakenBfs(Pacman::FieldProp((myrow + h - 1) % h, mycol), gamefield, myID)*firstfruit;
-                int tempvalue = k1 + k2;
-                if (value < tempvalue && !IfEmpty)
+                int eat = OffRoadEat(gamefield);
+                if (gamefield.players[eat].strength > eatvalue && gamefield.players[eat].strength > mineat)
                 {
-                    value = tempvalue; target = Pacman::up;
+                    eatvalue = gamefield.players[eat].strength;
+                    target = Pacman::up;
+                }
+                if (eatvalue == 0)
+                {
+                    double k1 = BfsValue(Pacman::FieldProp((myrow + h - 1) % h, mycol), gamefield, myID)*bfs;
+                    double k2 = FirstTakenBfs(Pacman::FieldProp((myrow + h - 1) % h, mycol), gamefield, myID)*firstfruit;
+                    double tempvalue = k1 + k2;
+                    if (value < tempvalue && !IfEmpty&& avoid != Pacman::up)
+                    {
+                        value = tempvalue; target = Pacman::up;
+                    }
                 }
             }
+        eatenenemy.setfalse();
         if (!(gamefield.fieldStatic[myrow][mycol] & Pacman::wallEast))
             if (LifeSave(Pacman::right, gamefield, myID))
             {
-                int k1 = BfsValue(Pacman::FieldProp(myrow, (mycol + 1) % w), gamefield, myID)*bfs;
-                int k2 = FirstTakenBfs(Pacman::FieldProp(myrow, (mycol + 1) % w), gamefield, myID)*firstfruit;
-                int tempvalue = k1 + k2;
-                if (value < tempvalue && !IfEmpty)
+                int eat = OffRoadEat(gamefield);
+                if (gamefield.players[eat].strength > eatvalue && gamefield.players[eat].strength > mineat)
                 {
-                    value = tempvalue; target = Pacman::right;
+                    eatvalue = gamefield.players[eat].strength;
+                    target = Pacman::right;
+                }
+                if (eatvalue == 0)
+                {
+                    double k1 = BfsValue(Pacman::FieldProp(myrow, (mycol + 1) % w), gamefield, myID)*bfs;
+                    double k2 = FirstTakenBfs(Pacman::FieldProp(myrow, (mycol + 1) % w), gamefield, myID)*firstfruit;
+                    double tempvalue = k1 + k2;
+                    if (value < tempvalue && !IfEmpty && avoid != Pacman::right)
+                    {
+                        value = tempvalue; target = Pacman::right;
+                    }
                 }
             }
+        eatenenemy.setfalse();
         if (!(gamefield.fieldStatic[myrow][mycol] & Pacman::wallSouth))
             if (LifeSave(Pacman::down, gamefield, myID))
             {
-                int k1 = BfsValue(Pacman::FieldProp((myrow + 1) % h, mycol), gamefield, myID)*bfs;
-                int k2 = FirstTakenBfs(Pacman::FieldProp((myrow + 1) % h, mycol), gamefield, myID)*firstfruit;
-                int tempvalue = k1 + k2;
-                if (value < tempvalue && !IfEmpty)
+                int eat = OffRoadEat(gamefield);
+                if (gamefield.players[eat].strength > eatvalue && gamefield.players[eat].strength > mineat)
                 {
-                    value = tempvalue; target = Pacman::down;
+                    eatvalue = gamefield.players[eat].strength;
+                    target = Pacman::down;
+                }
+                if (eatvalue == 0)
+                {
+                    double k1 = BfsValue(Pacman::FieldProp((myrow + 1) % h, mycol), gamefield, myID)*bfs;
+                    double k2 = FirstTakenBfs(Pacman::FieldProp((myrow + 1) % h, mycol), gamefield, myID)*firstfruit;
+                    double tempvalue = k1 + k2;
+                    if (value < tempvalue && !IfEmpty && avoid != Pacman::down)
+                    {
+                        value = tempvalue; target = Pacman::down;
+                    }
                 }
             }
+        eatenenemy.setfalse();
         if (!(gamefield.fieldStatic[myrow][mycol] & Pacman::wallWest))
             if (LifeSave(Pacman::left, gamefield, myID))
             {
-                int k1 = BfsValue(Pacman::FieldProp(myrow, (mycol + w - 1) % w), gamefield, myID)*bfs;
-                int k2 = FirstTakenBfs(Pacman::FieldProp(myrow, (mycol + w - 1) % w), gamefield, myID)*firstfruit;
-                int tempvalue = k1 + k2;
-                if (value < tempvalue && !IfEmpty)
+                int eat = OffRoadEat(gamefield);
+                if (gamefield.players[eat].strength > eatvalue && gamefield.players[eat].strength > mineat)
                 {
-                    value = tempvalue; target = Pacman::left;
+                    eatvalue = gamefield.players[eat].strength;
+                    target = Pacman::left;
+                }
+                if (eatvalue == 0)
+                {
+                    double k1 = BfsValue(Pacman::FieldProp(myrow, (mycol + w - 1) % w), gamefield, myID)*bfs;
+                    double k2 = FirstTakenBfs(Pacman::FieldProp(myrow, (mycol + w - 1) % w), gamefield, myID)*firstfruit;
+                    double tempvalue = k1 + k2;
+                    if (value < tempvalue && !IfEmpty && avoid != Pacman::left)
+                    {
+                        value = tempvalue; target = Pacman::left;
+                    }
                 }
             }
+        eatenenemy.setfalse();
         return target;
     }
 }
@@ -1453,17 +1719,15 @@ namespace QhHelper
 
 int main()
 {
-    string dict[] = {"WhyAreYouSoGoodAtIt", "WhyWouldItBLikeThis", "你怎么这么熟练", "你到底做过多少次了"};
+    string dict[] = {"WhyAreYouSoGoodAtIt", "WhyWouldItBLikeThis", "+++", "---"};
     string WhiteMembraneTauntLibrary[] = {"WB"};
+    string randomloud = "random";
     Pacman::GameField gameField;
-    string data, globalData; // 这是回合之间可以传递的信息
 
-                             // 如果在本地调试，有input.txt则会读取文件内容作为输入
-                             // 如果在平台上，则不会去检查有无input.txt
-    int myID = gameField.ReadInput("input.txt", data, globalData); // 输入，并获得自己ID
+    // 如果在本地调试，有input.txt则会读取文件内容作为输入
+    // 如果在平台上，则不会去检查有无input.txt
+    int myID = gameField.ReadInput("input.txt", QhHelper::data, QhHelper::globalData); // 输入，并获得自己ID
     srand(Pacman::seed + myID);
-
-
 
     //DFS
     //Helpers::FruitFirstPlay(gameField, myID, 0);
@@ -1474,7 +1738,8 @@ int main()
     Pacman::Direction ans = QhHelper::AIOutput(gameField, myID);
 
     // 随机决定是否叫嚣
-    if (gameField.turnID % 8)
+    if (ans != Pacman::stay) gameField.WriteOutput(ans, dict[Helpers::RandBetween(0, 4)], QhHelper::data, QhHelper::globalData);
+    else
     {
         // 简单随机，看哪个动作随机赢得最多
         for (int i = 0; i < 10000; i++)
@@ -1484,11 +1749,8 @@ int main()
         for (d = 0; d < 5; d++)
             if (Helpers::actionScore[d] > Helpers::actionScore[maxD])
                 maxD = d;
-        gameField.WriteOutput((Pacman::Direction)(maxD - 1), "可能是没救了", data, globalData);
+        gameField.WriteOutput((Pacman::Direction)(maxD - 1), randomloud, QhHelper::data, QhHelper::globalData);
     }
-    else
-        gameField.WriteOutput(ans, dict[Helpers::RandBetween(0, 4)], data, globalData);
-
 #ifndef _BOTZONE_ONLINE
     system("pause");
 #endif
